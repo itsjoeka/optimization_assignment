@@ -1,0 +1,16 @@
+Fault_ID,Town,Zone,Distance_km,Travel_time_hours,Fault_type,Repair_time_hours,Priority
+F1,Afadzo South,Far,38.4,1.017,Pole replacement,1.0,High
+F2,Liati,Far,20.0,0.55,Transformer maintenance,0.75,Normal
+F3,Golokwati,Far,21.3,0.5,Transformer maintenance,0.75,High
+F4,Agome yo,Near,15.9,0.517,Network line extension,2.0,Normal
+F5,Logba,Far,38.3,1.0,Network line extension,2.0,Normal
+F6,Afadzo South,Far,38.4,1.017,Cable joining and termination,0.33,High
+F7,Akpafu,Near,11.9,0.417,Cable joining and termination,0.33,Normal
+F8,Agome yo,Near,15.9,0.517,Cable joining and termination,0.33,High
+F9,Santrokofi,Near,7.5,0.333,Network line extension,2.0,Normal
+F10,Wli,Far,22.8,0.483,Transformer installation,4.0,High
+F11,Ve-Dator,Near,14.3,0.6,Transformer maintenance,0.75,Normal
+F12,Ve -Gbodome,Far,25.4,0.667,Transformer installation,4.0,Normal
+F13,Ve- Kobenu,Near,13.7,0.583,Cable joining and termination,0.33,Normal
+F14,Agome yo,Near,15.9,0.517,Transformer maintenance,0.75,Normal
+F15,Gbi - Kledzo,Near,4.9,0.267,Transformer maintenance,0.75,Normal
