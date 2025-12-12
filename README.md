@@ -98,33 +98,25 @@
 
 ---
 
-### **3. Zone of Fault**
+#### **3. Zone of Fault**
 
 * **Notation:** ( z_j )
 * Either **Near** or **Far**.
 
 ---
 
-### **4. Group Capacity (Updated)**
+#### **4. Group Capacity**
 
 * **Notation:** ( Q_i )
 * Maximum number of faults a group can handle per shift.
 
-Recommended **Scenario A** (conservative):
 [
 Q_i = 3 \quad \forall i \in I
 ]
 
-Reasons:
-
-* 8-hour shift
-* Travel time unchanged regardless of group size
-* Repairs often require teamwork
-* Safety protocols
-
 ---
 
-### **5. Shift Duration**
+#### **5. Shift Duration**
 
 * **Notation:** ( H )
   [
@@ -133,11 +125,11 @@ Reasons:
 
 ---
 
-### **6. Equity Tolerance**
+#### **6. Equity Tolerance**
 
 * **Notation:** ( \theta )
   [
-  \theta = 1.5
+  \theta = 1.7
   ]
   Far-zone average response time should be **no more than 50% greater** than Near-zone average response time.
 
@@ -152,9 +144,9 @@ Reasons:
 
 ---
 
-## 📌 **STEP 3 — Decision Variables**
+### **Decision Variables**
 
-### **Assignment Variable**
+#### **Assignment Variable**
 
 * **Notation:** ( x_{ij} )
 * Binary decision:
@@ -166,7 +158,7 @@ Reasons:
   \end{cases}
   ]
 
-Total variables = ( 5 \times 20 = 100 )
+Total variables = ( 5 \times 15 = 75 )
 
 ---
 
@@ -174,9 +166,7 @@ Total variables = ( 5 \times 20 = 100 )
 
 * **Average response time for each zone:**
 
-[
-R_{\text{Near}}, \quad R_{\text{Far}}
-]
+$R_{\text{Near}}, \quad R_{\text{Far}}$
 
 ---
 
