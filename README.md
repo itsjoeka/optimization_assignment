@@ -296,8 +296,8 @@ $$
 
 Let:
 
-* ( N_{Near} ) = number of Near-zone faults
-* ( N_{Far} ) = number of Far-zone faults
+* ( $N_{Near}$ ) = number of Near-zone faults
+* ( $N_{Far}$ ) = number of Far-zone faults
 
 Then:
 
