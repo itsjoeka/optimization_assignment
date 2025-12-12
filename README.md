@@ -1,6 +1,6 @@
 <h1 align="center"> Optimal Assignment of ECG Technicians Units to Electricity Faults Across Multi-Town Service Areas: A Case Study of Hohoe Operations Department </h1>
 
-# Table of Contents
+## Table of Contents
 - [Project Overview](#Project-Overview)
 - [Objectives](#Objectives)
 - [Mathematical Formulation](#Mathematical-Formulation)
@@ -8,14 +8,12 @@
 - [Team](#Team)
 - [References](#References)
   
-# Project Overview
+## Project Overview
 
 
-# Objectives
+## Objectives
 1. **Efficiency** – minimizing total travel time
 2. **Equity** – ensuring Far-zone towns do not wait excessively longer than Near-zone towns
-
-# Methods
 
 ## Mathematical Formulation
 ### **Defining the Sets**
@@ -218,7 +216,7 @@ Main Constraints used in the **Technician Group Fault Assignment Optimization Mo
 
 **Every fault must be assigned to exactly one technician group.**
 
-#### **Mathematical Formulation**
+#### **Formulation**
 
 $$
 \sum_{i=1}^{5} x_{ij} = 1, \quad \forall j \in J
@@ -236,7 +234,7 @@ For each fault ( $j$ ), exactly one of the variables
 
 **Each group can handle at most 3 faults per shift.**
 
-#### **Mathematical Formulation**
+#### **Formulation**
 
 $$
 \sum_{j=1}^{15} x_{ij} \leq Q_i, \quad \forall i \in I
@@ -255,7 +253,7 @@ The number of faults assigned to each group ( $i = 1,2,3,4,5$ ) must be ≤ 3.
 
 #### **Constraint 3 — Time Feasibility**
 
-#### **Mathematical Formulation**
+#### **Formulation**
 
 $$
 \sum_{j=1}^{20} (t_j + r_j) x_{ij} \leq H, \quad \forall i \in I
@@ -274,7 +272,7 @@ For each group, sum the total time required for its assigned faults. This must b
 
 #### **Constraint 4 — Equity**
 
-#### **Mathematical Formulation**
+#### **Formulation**
 
 $$
 R_{\text{Far}} \leq \theta \cdot R_{\text{Near}}
