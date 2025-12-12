@@ -65,7 +65,7 @@ $Z = {\text{Near}, \text{Far}}$
 
 * **Notation:** ( $t_j$ )
 * Time to travel from the Hohoe office to fault ( $j$ ).
-* Obtained from [ECG Towns Dataset](#dataset/ecg_towns_dataset.csv)
+* Obtained from [ECG Towns Dataset](dataset/ecg_towns_dataset.csv)
 
 ---
 
