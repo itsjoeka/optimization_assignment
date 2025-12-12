@@ -32,9 +32,7 @@
 
 * **Notation:** ( I )
 * **Definition:**
-  [
-  I = {1, 2, 3, 4, 5}
-  ]
+$$I = {1, 2, 3, 4, 5}$$
 * **Meaning:** Five technician groups, each group containing **three technicians who always move together**.
 
 | Group | Description             |
@@ -49,22 +47,18 @@
 
 #### **Set 2: Faults**
 
-* **Notation:** ( J )
+* **Notation:** ( $J$ )
 * **Definition:**
-  [
-  J = {1, 2, \ldots, 15}
-  ]
+$J = {1, 2, \ldots, 15}$
 * **Meaning:** 15 faults reported in a given day.
 
 ---
 
 #### **Set 3: Zones**
 
-* **Notation:** ( Z )
+* **Notation:** ( $Z$ )
 * **Definition:**
-  [
-  Z = {\text{Near}, \text{Far}}
-  ]
+$Z = {\text{Near}, \text{Far}}$
 
 **Zone definitions:**
 
@@ -77,15 +71,15 @@
 
 #### **1. Travel Time**
 
-* **Notation:** ( t_j )
-* Time to travel from the Hohoe office to fault ( j ).
+* **Notation:** ( $t_j$ )
+* Time to travel from the Hohoe office to fault ( $j$ ).
 * Obtained from [ECG Towns Dataset](#dataset/ecg_towns_dataset.csv)
 
 ---
 
 #### **2. Repair Time**
 
-* **Notation:** ( r_j )
+* **Notation:** ( $r_j$ )
 
 | Fault Type                    | Repair Time (hrs) |
 | ------------------------------| ----------------- |
