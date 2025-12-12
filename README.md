@@ -181,7 +181,7 @@ $$
 
 ---
 
-#### **Simplified Starting Objective (Recommended for Implementation First)**
+#### **Starting Objective**
 
 $$
 \min Z =
