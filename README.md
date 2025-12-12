@@ -32,9 +32,8 @@
 
 * **Notation:** ( I )
 * **Definition:**
-$$
-I = {1, 2, 3, 4, 5}
-$$
+$I = {1, 2, 3, 4, 5}$
+
 * **Meaning:** Five technician groups, each group containing **three technicians who always move together**.
 
 | Group | Description             |
@@ -51,9 +50,8 @@ $$
 
 * **Notation:** ( $J$ )
 * **Definition:**
-$$
-J = {1, 2, \ldots, 15}
-$$
+$J = {1, 2, \ldots, 15}$
+
 * **Meaning:** 15 faults reported in a given day.
 
 ---
@@ -126,10 +124,8 @@ $$
 #### **6. Equity Tolerance**
 
 * **Notation:** ( $\theta$ )
-$$
-\theta = 1.7
-$$
-  Far-zone average response time should be **no more than 50% greater** than Near-zone average response time.
+    * $\theta = 1.7$
+Far-zone average response time should be **no more than 50% greater** than Near-zone average response time.
 
 ---
 
