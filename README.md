@@ -20,7 +20,7 @@
 
 #### **Set 1: Technician Groups**
 
-* **Notation:** ( I )
+* **Notation:** ( $I$ )
 * **Definition:**
 $I = {1, 2, 3, 4, 5}$
 
@@ -54,8 +54,8 @@ $Z = {\text{Near}, \text{Far}}$
 
 **Zone definitions:**
 
-* **Near:** Towns ≤ 20 km from Hohoe
-* **Far:** Towns > 20 km from Hohoe
+* **Near:** Towns ≤ 20 km from Hohoe ECG
+* **Far:** Towns > 20 km from Hohoe ECG
 
 ---
 
