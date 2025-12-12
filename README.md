@@ -32,7 +32,9 @@
 
 * **Notation:** ( I )
 * **Definition:**
-$$I = {1, 2, 3, 4, 5}$$
+$$
+I = {1, 2, 3, 4, 5}
+$$
 * **Meaning:** Five technician groups, each group containing **three technicians who always move together**.
 
 | Group | Description             |
@@ -49,7 +51,9 @@ $$I = {1, 2, 3, 4, 5}$$
 
 * **Notation:** ( $J$ )
 * **Definition:**
-$J = {1, 2, \ldots, 15}$
+$$
+J = {1, 2, \ldots, 15}
+$$
 * **Meaning:** 15 faults reported in a given day.
 
 ---
@@ -94,47 +98,47 @@ $Z = {\text{Near}, \text{Far}}$
 
 #### **3. Zone of Fault**
 
-* **Notation:** ( z_j )
+* **Notation:** ( $z_j$ )
 * Either **Near** or **Far**.
 
 ---
 
 #### **4. Group Capacity**
 
-* **Notation:** ( Q_i )
+* **Notation:** ( $Q_i$ )
 * Maximum number of faults a group can handle per shift.
 
-[
+$$
 Q_i = 3 \quad \forall i \in I
-]
+$$
 
 ---
 
 #### **5. Shift Duration**
 
-* **Notation:** ( H )
-  [
-  H = 8 \text{ hours}
-  ]
+* **Notation:** ( $H$ )
+$$
+H = 8 \text{ hours}
+$$
 
 ---
 
 #### **6. Equity Tolerance**
 
-* **Notation:** ( \theta )
-  [
-  \theta = 1.7
-  ]
+* **Notation:** ( $\theta$ )
+$$
+\theta = 1.7
+$$
   Far-zone average response time should be **no more than 50% greater** than Near-zone average response time.
 
 ---
 
 ### **7. Objective Weights**
 
-* **Notation:** ( \alpha, \beta )
-  [
+* **Notation:** ( $$\alpha$$, $$\beta$$ )
+$$
   \alpha + \beta = 1
-  ]
+$$
 
 ---
 
@@ -142,14 +146,12 @@ Q_i = 3 \quad \forall i \in I
 
 #### **Assignment Variable**
 
-
-
 * **Notation:** $x_{ij}$
 * Binary decision:
     * $x_{ij} = 1$ if group *i* IS assigned to fault *j*
     * $x_{ij} = 0$ if group *i* is NOT assigned to fault *j*
 
-Total variables = ( 5 \times 15 = 75 )
+Total variables = ( 5 $$\times$$ 15 = 75 )
 
 ---
 
@@ -162,51 +164,51 @@ Total variables = ( 5 \times 15 = 75 )
 
 ### **The Objective Function**
 
-### **Full Multi-Objective Function**
+#### **Full Multi-Objective Function**
 
 $$
-\min Z = \alpha \cdot \left( \sum_{i=1}^{5} \sum_{j=1}^{20} t_j \cdot x_{ij} \right)
+\min Z = \alpha \cdot \left( \sum_{i=1}^{5} \sum_{j=1}^{15} t_j \cdot x_{ij} \right)
 ;+; \beta \cdot (R_{\text{Far}} - R_{\text{Near}})
 $$
 
 ---
 
-### **Efficiency Component**
+#### **Efficiency Component**
 
-[
+$$
 \text{Total Travel Time} = \sum_{i=1}^{5} \sum_{j=1}^{20} t_j x_{ij}
-]
+$$
 
 ---
 
-### **Equity Component**
+#### **Equity Component**
 
-[
+$$
 R_{\text{Near}} =
 \frac{\sum_{j : z_j = \text{Near}} t_j \left(\sum_{i=1}^{5} x_{ij}\right)}
 {\text{Number of Near faults}}
-]
+$$
 
-[
+$$
 R_{\text{Far}} =
 \frac{\sum_{j : z_j = \text{Far}} t_j \left(\sum_{i=1}^{5} x_{ij}\right)}
 {\text{Number of Far faults}}
-]
+$$
 
 ---
 
-### ✔ **Simplified Starting Objective (Recommended for Implementation First)**
+#### **Simplified Starting Objective (Recommended for Implementation First)**
 
-[
+$$
 \min Z =
-\sum_{i=1}^{5} \sum_{j=1}^{20} t_j \cdot x_{ij}
-]
+\sum_{i=1}^{5} \sum_{j=1}^{15} t_j \cdot x_{ij}
+$$
 
 Add the equity term later once the base model works.
 
 ---
 
-## 📌 **Summary**
+## **Summary**
 
 | Component         | Description                                                              |
 | ----------------- | ------------------------------------------------------------------------ |
@@ -216,15 +218,6 @@ Add the equity term later once the base model works.
 | Objective         | Minimize travel time + zone inequity                                     |
 
 ---
-
-If you want, I can also generate:
-
-✅ A full **LaTeX version**
-✅ A **Pyomo**, **PuLP**, or **Gurobi** implementation script
-✅ A diagram or flowchart for the README
-✅ Example CSV templates
-
-Just tell me!
 
 
 ## Optimization Model Development
