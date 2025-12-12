@@ -1,1 +1,3 @@
-optimization_exams.ipynb - main 
+01_data.ipynb               - data notebook
+02_optimization_model.ipynb - modelling notebook
+03_diagnostics.ipynb        - for diagnostics

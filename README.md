@@ -114,8 +114,8 @@ $$
 #### **6. Equity Tolerance**
 
 * **Notation:** ( $\theta$ )
-    * $\theta = 1.7$
-Far-zone average response time should be **no more than 50% greater** than Near-zone average response time.
+    * $\theta = 1.6$
+Far-zone average response time should be **no more than 60% greater** than Near-zone average response time.
 
 ---
 
@@ -279,7 +279,7 @@ $$
 R_{\text{Far}} \leq \theta \cdot R_{\text{Near}}
 $$
 
-Where ( $\theta = 1.7$ ), and:
+Where ( $\theta = 1.6$ ), and:
 
 $$
 R_{\text{Near}} =
@@ -305,7 +305,7 @@ Then:
 $$
 \frac{\sum_{j: z_j = Far} t_j}{N_{Far}}
 \le
-1.7 \cdot
+1.6 \cdot
 \frac{\sum_{j: z_j = Near} t_j}{N_{Near}}
 $$
 
@@ -314,7 +314,7 @@ Or fully linearized:
 $$
 \sum_{j: z_j = Far} t_j
 \le
-1.7 \cdot \frac{N_{Far}}{N_{Near}}
+1.6 \cdot \frac{N_{Far}}{N_{Near}}
 \cdot
 \sum_{j: z_j = Near} t_j
 $$
