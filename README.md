@@ -148,14 +148,12 @@ Q_i = 3 \quad \forall i \in I
 
 #### **Assignment Variable**
 
-* **Notation:** ( x_{ij} )
+
+
+* **Notation:** $x_{ij}$
 * Binary decision:
-$  x_{ij} =
-  \begin{cases}
-  1 & \text{if group } i \text{ is assigned to fault } j \
-  0 & \text{otherwise}
-  \end{cases}
-$
+ - $x_{ij} = 1$ if group *i* IS assigned to fault *j*
+ - $x_{ij} = 0$ if group *i* is NOT assigned to fault *j*
 
 Total variables = ( 5 \times 15 = 75 )
 
