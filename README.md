@@ -152,29 +152,28 @@ Q_i = 3 \quad \forall i \in I
 
 * **Notation:** $x_{ij}$
 * Binary decision:
- - $x_{ij} = 1$ if group *i* IS assigned to fault *j*
- - $x_{ij} = 0$ if group *i* is NOT assigned to fault *j*
+    * $x_{ij} = 1$ if group *i* IS assigned to fault *j*
+    * $x_{ij} = 0$ if group *i* is NOT assigned to fault *j*
 
 Total variables = ( 5 \times 15 = 75 )
 
 ---
 
-### **Helper Variables**
+#### **Helper Variables**
 
 * **Average response time for each zone:**
-
-$R_{\text{Near}}, \quad R_{\text{Far}}$
+    * $R_{\text{Near}}, \quad R_{\text{Far}}$
 
 ---
 
-## 📌 **STEP 4 — Objective Function**
+### **The Objective Function**
 
 ### **Full Multi-Objective Function**
 
-[
+$$
 \min Z = \alpha \cdot \left( \sum_{i=1}^{5} \sum_{j=1}^{20} t_j \cdot x_{ij} \right)
 ;+; \beta \cdot (R_{\text{Far}} - R_{\text{Near}})
-]
+$$
 
 ---
 
