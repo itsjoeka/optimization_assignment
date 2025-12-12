@@ -3,14 +3,7 @@
 # Table of Contents
 - [Project Overview](#Project-Overview)
 - [Objectives](#Objectives)
-- [Methods](#Methods)
-  - [Data Acquisition and Preprocessing](#Data-Acquisition-and-Preprocessing)
-  - [Mathematical Formulation](#Mathematical-Formulation)
-  - [Optimization Model Development](#Optimization-Model-Development)
-- [Results](#Results)
-  - [xxx](#xxx)
-- [Conclusions](#Conclusions)
-- [Recomendation](#Reccomendation)
+- [Mathematical Formulation](#Mathematical-Formulation)
 - [Acknowledgment](#Acknowledgment)
 - [Team](#Team)
 - [References](#References)
@@ -18,12 +11,11 @@
 # Project Overview
 
 
-## Objectives
+# Objectives
 1. **Efficiency** – minimizing total travel time
 2. **Equity** – ensuring Far-zone towns do not wait excessively longer than Near-zone towns
 
-## Methods
-## Data Acquisition and Preprocessing
+# Methods
 
 ## Mathematical Formulation
 ### **Defining the Sets**
@@ -247,13 +239,11 @@ For each fault ( $j$ ), exactly one of the variables
 #### **Mathematical Formulation**
 
 $$
-\sum_{j=1}^{20} x_{ij} \leq Q_i, \quad \forall i \in I
+\sum_{j=1}^{15} x_{ij} \leq Q_i, \quad \forall i \in I
 $$
 
 With ( $Q_i = 3$ ):
-$$
-\sum_{j=1}^{20} x_{ij} \leq 3, \quad \forall i
-$$
+$\sum_{j=1}^{15} x_{ij} \leq 3, \quad \forall i$
 
 **Interpretation**
 
@@ -272,9 +262,7 @@ $$
 $$
 
 With ( $H = 8$ ):
-$$
-\sum_{j=1}^{20} (t_j + r_j) x_{ij} \leq 8
-$$
+$\sum_{j=1}^{20} (t_j + r_j) x_{ij} \leq 8$
 
 **Interpretation**
 
@@ -292,7 +280,7 @@ $$
 R_{\text{Far}} \leq \theta \cdot R_{\text{Near}}
 $$
 
-Where ( $\theta = 1.5$ ), and:
+Where ( $\theta = 1.7$ ), and:
 
 $$
 R_{\text{Near}} =
@@ -318,7 +306,7 @@ Then:
 $$
 \frac{\sum_{j: z_j = Far} t_j}{N_{Far}}
 \le
-1.5 \cdot
+1.7 \cdot
 \frac{\sum_{j: z_j = Near} t_j}{N_{Near}}
 $$
 
@@ -327,22 +315,10 @@ Or fully linearized:
 $$
 \sum_{j: z_j = Far} t_j
 \le
-1.5 \cdot \frac{N_{Far}}{N_{Near}}
+1.7 \cdot \frac{N_{Far}}{N_{Near}}
 \cdot
 \sum_{j: z_j = Near} t_j
 $$
-
-
-## Optimization Model Development
-
-
-# Results
-
-
-# Conclusion
-
-
-# Recomendation
 
 
 # Acknowledgment
