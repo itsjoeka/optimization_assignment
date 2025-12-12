@@ -204,7 +204,7 @@ Add the equity term later once the base model works.
 
 ---
 
-## **Summary**
+#### **Summary**
 
 | Component         | Description                                                              |
 | ----------------- | ------------------------------------------------------------------------ |
@@ -214,6 +214,123 @@ Add the equity term later once the base model works.
 | Objective         | Minimize travel time + zone inequity                                     |
 
 ---
+
+
+### Model Constraints
+
+Main Constraints used in the **Technician Group Fault Assignment Optimization Model
+
+---
+
+#### **Constraint 1 — Coverage**
+
+**Every fault must be assigned to exactly one technician group.**
+
+#### **Mathematical Formulation**
+
+$$
+\sum_{i=1}^{5} x_{ij} = 1, \quad \forall j \in J
+$$
+
+**Interpretation**
+
+For each fault ( $j$ ), exactly one of the variables
+( $x_{1j}$, $x_{2j}$, $x_{3j}$, $x_{4j}$, $x_{5j}$ ) must be 1.
+
+
+---
+
+#### **Constraint 2 — Capacity**
+
+**Each group can handle at most 3 faults per shift.**
+
+#### **Mathematical Formulation**
+
+$$
+\sum_{j=1}^{20} x_{ij} \leq Q_i, \quad \forall i \in I
+$$
+
+With ( $Q_i = 3$ ):
+$$
+\sum_{j=1}^{20} x_{ij} \leq 3, \quad \forall i
+$$
+
+**Interpretation**
+
+The number of faults assigned to each group ( $i = 1,2,3,4,5$ ) must be ≤ 3.
+
+**5 constraints** (one per group)
+
+---
+
+#### **Constraint 3 — Time Feasibility**
+
+#### **Mathematical Formulation**
+
+$$
+\sum_{j=1}^{20} (t_j + r_j) x_{ij} \leq H, \quad \forall i \in I
+$$
+
+With ( $H = 8$ ):
+$$
+\sum_{j=1}^{20} (t_j + r_j) x_{ij} \leq 8
+$$
+
+**Interpretation**
+
+For each group, sum the total time required for its assigned faults. This must be ≤ 8 hours.
+
+**5 constraints** (one per group)
+
+---
+
+#### **Constraint 4 — Equity**
+
+#### **Mathematical Formulation**
+
+$$
+R_{\text{Far}} \leq \theta \cdot R_{\text{Near}}
+$$
+
+Where ( $\theta = 1.5$ ), and:
+
+$$
+R_{\text{Near}} =
+\frac{\sum_{j : z_j = Near} t_j}{\sum_{j : z_j = Near} 1}
+$$
+
+$$
+R_{\text{Far}} =
+\frac{\sum_{j : z_j = Far} t_j}{\sum_{j : z_j = Far} 1}
+$$
+
+---
+
+#### **Implementation**
+
+Let:
+
+* ( N_{Near} ) = number of Near-zone faults
+* ( N_{Far} ) = number of Far-zone faults
+
+Then:
+
+$$
+\frac{\sum_{j: z_j = Far} t_j}{N_{Far}}
+\le
+1.5 \cdot
+\frac{\sum_{j: z_j = Near} t_j}{N_{Near}}
+$$
+
+Or fully linearized:
+
+$$
+\sum_{j: z_j = Far} t_j
+\le
+1.5 \cdot \frac{N_{Far}}{N_{Near}}
+\cdot
+\sum_{j: z_j = Near} t_j
+$$
 
 
 ## Optimization Model Development
