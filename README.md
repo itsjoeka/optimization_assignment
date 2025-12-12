@@ -122,6 +122,7 @@ Far-zone average response time should be **no more than 50% greater** than Near-
 ### **7. Objective Weights**
 
 * **Notation:** ( $\alpha$, $\beta$ )
+
 $$
 \alpha + \beta = 1
 $$
