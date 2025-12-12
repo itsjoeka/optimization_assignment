@@ -163,7 +163,7 @@ $$
 #### **Efficiency Component**
 
 $$
-\text{Total Travel Time} = \sum_{i=1}^{5} \sum_{j=1}^{20} t_j x_{ij}
+\text{Total Travel Time} = \sum_{i=1}^{5} \sum_{j=1}^{15} t_j x_{ij}
 $$
 
 ---
@@ -257,11 +257,11 @@ The number of faults assigned to each group ( $i = 1,2,3,4,5$ ) must be ≤ 3.
 #### **Formulation**
 
 $$
-\sum_{j=1}^{20} (t_j + r_j) x_{ij} \leq H, \quad \forall i \in I
+\sum_{j=1}^{15} (t_j + r_j) x_{ij} \leq H, \quad \forall i \in I
 $$
 
 With ( $H = 8$ ):
-$\sum_{j=1}^{20} (t_j + r_j) x_{ij} \leq 8$
+$\sum_{j=1}^{15} (t_j + r_j) x_{ij} \leq 8$
 
 **Interpretation**
 
