@@ -104,10 +104,7 @@ $$
 
 #### **5. Shift Duration**
 
-* **Notation:** ( $H$ )
-$$
-H = 8 \text{ hours}
-$$
+* **Notation:** ( $H$ ) - $H = 8 \text{ hours}$
 
 ---
 
