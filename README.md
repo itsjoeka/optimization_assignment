@@ -181,17 +181,6 @@ $$
 
 ---
 
-#### **Starting Objective**
-
-$$
-\min Z =
-\sum_{i=1}^{5} \sum_{j=1}^{15} t_j \cdot x_{ij}
-$$
-
-Add the equity term later once the base model works.
-
----
-
 #### **Summary**
 
 | Component         | Description                                                              |
