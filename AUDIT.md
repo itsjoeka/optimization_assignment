@@ -253,7 +253,7 @@ $$\min \; \alpha \cdot \underbrace{\frac{1}{|J|}\sum_j R_j}_{\text{efficiency}} 
 - `Priority` becomes usable — weight $R_j$ by priority, or add $\sum_k k\,y_{ijk} \le 2$ for High-priority faults.
 - It is a recognised model class (**parallel-machine scheduling with position-indexed assignment**), which gives you a literature to cite and a defensible methods section.
 
-> A feasibility probe of exactly this formulation was run against the project's own data during this audit to confirm it solves and is non-degenerate. See §9 for the result.
+**Verified.** This formulation was built and solved against the project's own data during this audit. It returns `Optimal`, the objective **varies** across feasible solutions, and it yields a result materially stronger than the current paper's claim. Full output in §9.2.
 
 ---
 
@@ -392,3 +392,26 @@ CLAIM 5  capacity rigid (5x3 = 15 = n), shift slack (29.055h of 40h, 73%) -> CON
 CLAIM 6  03_diagnostics.ipynb cell 1: SyntaxError, line 33
          "    status =  if total <= H else "                              -> CONFIRMED
 ```
+
+### 9.2 Feasibility probe of the proposed reformulation
+
+The §6 model was implemented and solved against `dataset/ecg_faults_dataset.csv` (PuLP 3.3.2 / CBC, $s_j = 2t_j + r_j$, $\alpha=0.7$, $\beta=0.3$, $\theta=1.6$, tight big-M $= H$, lexicographic load ordering for symmetry breaking):
+
+```
+STATUS Optimal | obj 1.8875
+mean response 2.549 h | Cmax 7.982 h | R_near 2.389 | R_far 2.732 | ratio 1.144
+random baseline: 1/3000 shift-feasible | mean 2.984 h
+=> optimum beats the feasible random plan by 14.6%
+=> objective VARIES across feasible solutions -> NON-DEGENERATE
+```
+
+**Four things this establishes for Wednesday:**
+
+1. **The reformulation works.** The objective is no longer constant, CBC does real branch-and-bound, and the model returns a proven optimum. §4.1 is solved without any new data.
+2. **You have a much stronger headline result than the one you were chasing.** Under round-trip travel the 8-hour shift becomes genuinely binding ($C_{\max} = 7.982$ of 8 h, versus 73% utilisation in the current model, §5.4). Of 3,000 random round-robin dispatch plans, **only one was shift-feasible.** "Ad-hoc dispatch produces a workable plan in 1 of 3,000 attempts; the model produces one every time, and 14.6% faster" is a far better paper than "we saved 14.6% of travel time." **Lead with feasibility, not with the percentage.**
+3. **⚠️ The equity constraint is now slack, not binding.** Response-based equity gives a Far/Near ratio of **1.144**, comfortably inside θ = 1.6 — so θ does nothing at its current value. This is *progress* (the constraint is now a real function of the decision variables) but it means **θ = 1.6 is no longer the right setting.** Sweep θ downward on Thursday to find where it starts to bind (likely θ ≈ 1.1–1.2) and report the efficiency cost of tightening it. That sweep *is* your equity result.
+4. **⚠️ Solver time is now a real constraint.** CBC needed roughly 180 s at n = 15 — about four orders of magnitude slower than the degenerate model, which "solved" in 0.01 s. Budget for this: keep the symmetry-breaking constraint, keep big-M tight at $M = H$, and expect the Thursday scalability study (n up to 200) to need a time limit and reported optimality gaps rather than proven optima. Reporting "solved to within x% in y seconds" is perfectly publishable — just do not promise proven optimality at every scale.
+
+**Two caveats on the probe itself:**
+- The 14.6% figure rests on a **single** feasible random draw, so it is indicative only. Wednesday's proper benchmark (§8) needs a **feasibility-aware** baseline — a greedy heuristic that respects the shift constraint — or the comparison collapses to the feasibility argument alone, which is fine but should be a deliberate choice.
+- $s_j = 2t_j + r_j$ assumes crews return to the Hohoe depot between jobs. This is the assumption to confirm with ECG **today** — it drives the entire result, since it is what makes the shift constraint bind.
