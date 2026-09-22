@@ -1,5 +1,37 @@
 # Repository Audit, Manuscript Review, and Route to a Final Draft
 
+> ### ⚠️ UPDATE — 22 September 2026, later the same day
+>
+> Two things changed after this audit was written. **Read this box before acting on §6, §8 or §9.2.**
+>
+> **1. Crews do not return to the depot between jobs.** A technician at the Hohoe post confirms that
+> when a call comes in while a crew is already on site, they travel **directly from the current site
+> to the next one**. They return to the post only when they need a tool or material stocked only
+> there. This is decisive:
+>
+> - **§4.5 is resolved, and the answer is the harder one.** The problem is a multi-vehicle
+>   **routing** problem — depot-origin, service times, shift limit, spatial equity — not an
+>   assignment problem.
+> - **§6's formulation and §9.2's probe are superseded.** Both assumed $s_j = 2t_j + r_j$
+>   (round trip to the depot). That assumption is now known to be wrong, so the probe's headline
+>   numbers — mean response 2.549 h, $C_{\max}$ 7.982 h, "1 of 3,000 random plans feasible",
+>   "14.6% faster" — **must not be quoted**. Site-to-site travel is generally *cheaper* than
+>   round-tripping, so the shift constraint will bind less hard than the probe suggested.
+> - **The good news is structural.** Once travel cost depends on the *pair* of nodes rather than on
+>   the fault alone, the degeneracy of §4.1 becomes **mathematically impossible**. Routing fixes the
+>   fatal flaw by construction.
+> - **The new critical path is data.** A routing model needs an inter-town travel-time matrix
+>   (~24 × 24 including the depot). The project has only depot→town times. Getting this matrix is
+>   now the single most important task.
+>
+> **2. The deadline moved to Friday 2 October 2026.** Ten days, not three. The three-day plan in §8
+> was a triage plan; it is replaced by a proper one. With the extra week the team can build the
+> *right* model rather than the merely-sound one.
+>
+> §§1–5 and §7 (the defect findings, the data audit, and the referee/venue analysis) are unaffected
+> and still stand. A replacement for §6 and §8 follows in `REVISION_PLAN.md`.
+
+
 **Project:** *Optimal Assignment of ECG Technician Units to Electricity Faults Across Multi-Town Service Areas: A Case Study of the Hohoe Operations Department*
 **Audit date:** 22 September 2026 (Tuesday) · **Target:** complete first draft by Friday 25 September 2026
 **Repository:** `itsjoeka/optimization_assignment` @ `claude/upbeat-brahmagupta-nl359q`
@@ -227,7 +259,7 @@ The fix that rescues the project using **only data already in hand**: stop optim
 - $C_{\max} \ge 0$ — makespan.
 - $G \ge 0$ — equity gap.
 
-**Job occupancy** (assuming crews return to the Hohoe depot between jobs — *confirm with ECG*): $s_j = 2t_j + r_j$.
+**Job occupancy** — ⚠️ **SUPERSEDED.** This assumed crews return to the depot between jobs: $s_j = 2t_j + r_j$. Field evidence received 22 Sep confirms they do **not**. Travel must be computed between *consecutive sites*, which requires an inter-town matrix. See the update box at the top and `REVISION_PLAN.md`.
 
 **Constraints**
 
@@ -302,7 +334,7 @@ Given a fixed model, a proper benchmark, and a sensitivity analysis, this is a c
 Three working days (Wed 23, Thu 24, Fri 25) and five people. This works **only** if the model is fixed first — do not let anyone draft Results before Wednesday evening.
 
 ### Start today (Tue 22), 30 minutes, in parallel
-- [ ] **Email ECG Hohoe / Abdul Haliq** requesting written permission to publish the data + confirmation of four facts: (a) is H = 8 h the real shift? (b) is Q = 3 faults/crew real? (c) **do crews return to the Hohoe depot between jobs?** (d) does ECG use a formal Near/Far km threshold? — *This is the only critical-path item outside your control. Send it first.*
+- [ ] **Email ECG Hohoe / Abdul Haliq** requesting written permission to publish the data + confirmation of four facts: (a) is H = 8 h the real shift? (b) is Q = 3 faults/crew real? (c) ~~do crews return to the Hohoe depot between jobs?~~ **— ANSWERED 22 Sep: no, they travel site-to-site.** (d) does ECG use a formal Near/Far km threshold? — *This is the only critical-path item outside your control. Send it first.*
 - [ ] Verify the **Fodome** distance against the original source (§5.3).
 - [ ] Decide the target venue (§7.5) and download its template + author guidelines.
 - [ ] Agree authorship order and the corresponding author.
@@ -393,7 +425,12 @@ CLAIM 6  03_diagnostics.ipynb cell 1: SyntaxError, line 33
          "    status =  if total <= H else "                              -> CONFIRMED
 ```
 
-### 9.2 Feasibility probe of the proposed reformulation
+### 9.2 Feasibility probe of the proposed reformulation — ⚠️ SUPERSEDED
+
+> **Do not quote these numbers.** This probe assumed crews round-trip to the depot ($s_j = 2t_j + r_j$).
+> Field evidence received 22 Sep confirms crews travel site-to-site instead. The probe is retained
+> only as evidence that *a* non-degenerate formulation solves on this data; its specific results —
+> including the "1 in 3,000" feasibility figure and the 14.6% improvement — no longer apply.
 
 The §6 model was implemented and solved against `dataset/ecg_faults_dataset.csv` (PuLP 3.3.2 / CBC, $s_j = 2t_j + r_j$, $\alpha=0.7$, $\beta=0.3$, $\theta=1.6$, tight big-M $= H$, lexicographic load ordering for symmetry breaking):
 
@@ -414,4 +451,4 @@ random baseline: 1/3000 shift-feasible | mean 2.984 h
 
 **Two caveats on the probe itself:**
 - The 14.6% figure rests on a **single** feasible random draw, so it is indicative only. Wednesday's proper benchmark (§8) needs a **feasibility-aware** baseline — a greedy heuristic that respects the shift constraint — or the comparison collapses to the feasibility argument alone, which is fine but should be a deliberate choice.
-- $s_j = 2t_j + r_j$ assumes crews return to the Hohoe depot between jobs. This is the assumption to confirm with ECG **today** — it drives the entire result, since it is what makes the shift constraint bind.
+- ⚠️ **This caveat has now been resolved against the probe.** $s_j = 2t_j + r_j$ assumed crews return to the Hohoe depot between jobs. They do not. The entire probe result rested on that assumption, which is why it is marked superseded above — a worked example of why the ECG questions in §8 were on the critical path.
