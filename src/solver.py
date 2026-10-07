@@ -31,6 +31,7 @@ Point 3 is the important one and belongs in the paper.
 """
 from __future__ import annotations
 
+import re
 import time
 from dataclasses import dataclass
 from itertools import permutations
@@ -143,19 +144,45 @@ def solve(travel, repair, zones, floors, weights, params, *,
     else:
         prob += params.alpha * efficiency + params.beta * G
 
-    prob.solve(pulp.PULP_CBC_CMD(msg=msg, timeLimit=time_limit))
+    # Capture CBC's own log so the exit condition and gap can be read rather
+    # than inferred. PuLP's status alone cannot distinguish a proven optimum
+    # from an incumbent returned at the time limit.
+    import tempfile, os
+    logfd, logpath = tempfile.mkstemp(suffix=".cbclog")
+    os.close(logfd)
+    try:
+        prob.solve(pulp.PULP_CBC_CMD(msg=msg, timeLimit=time_limit,
+                                     logPath=logpath))
+        cbc_log = open(logpath, errors="replace").read()
+    finally:
+        try:
+            os.unlink(logpath)
+        except OSError:
+            pass
     elapsed = time.time() - t0
     status = pulp.LpStatus[prob.status]
+
+    # PuLP reports 'Optimal' whenever CBC returns a feasible solution, INCLUDING
+    # when CBC stopped on its time limit without completing the search.
+    # Reporting that as a proven optimum in a paper would be wrong.
+    stopped_on_time = "Stopped on time limit" in cbc_log
+    search_completed = "Search completed" in cbc_log
+    gap_match = re.search(r"^Gap:\s+([0-9.eE+-]+)", cbc_log, re.M)
+    final_gap = float(gap_match.group(1)) if gap_match else None
 
     # PuLP reports 'Optimal' whenever CBC returns a feasible solution, INCLUDING
     # when CBC stopped on its time limit without proving optimality. Reporting
     # that as a proven optimum in a paper would be wrong, so a solve that ran to
     # the limit is relabelled. It is a genuine incumbent, just not a proven one.
     solve_only = elapsed - enum_seconds
-    hit_limit = time_limit is not None and solve_only >= 0.98 * time_limit
+    hit_limit = stopped_on_time or (
+        not search_completed and time_limit is not None
+        and solve_only >= 0.98 * time_limit)
     if hit_limit and status == "Optimal":
         status = "Feasible (time limit)"
     meta["hit_time_limit"] = bool(hit_limit)
+    meta["search_completed"] = bool(search_completed)
+    meta["final_gap"] = final_gap        # CBC's reported gap at exit, if any
     meta["solve_seconds"] = solve_only
 
     schedule, reported = {}, {}

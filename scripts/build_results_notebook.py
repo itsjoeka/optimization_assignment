@@ -667,21 +667,28 @@ plt.rcParams.update({"font.size": 9, "figure.dpi": 150, "savefig.bbox": "tight"}
 
 # Figure 1 -- crew schedule Gantt
 fig, ax = plt.subplots(figsize=(7.5, 3.0))
+# Each job is an out-and-back trip from the base: drive out (t), repair (r),
+# drive back (t). Drawing all 2t as one bar at the job start would overlap the
+# repair and leave the return leg as a white gap, which is not what happens.
 for c, seq in sorted(opt.schedule.items()):
     cum = 0.0
     for j in seq:
-        ax.barh(c, 2 * travel[j], left=cum, color="#9fb3c8", edgecolor="white", height=0.6)
+        ax.barh(c, travel[j], left=cum, color="#9fb3c8",
+                edgecolor="white", height=0.6)                      # outbound
         ax.barh(c, repair[j], left=cum + travel[j], color="#2f6f9f",
-                edgecolor="white", height=0.6)
-        ax.text(cum + travel[j] + repair[j] / 2, c, ids[j], ha="center", va="center",
-                color="white", fontsize=7)
+                edgecolor="white", height=0.6)                      # repair
+        ax.barh(c, travel[j], left=cum + travel[j] + repair[j], color="#9fb3c8",
+                edgecolor="white", height=0.6)                      # return
+        if repair[j] > 0.45:
+            ax.text(cum + travel[j] + repair[j] / 2, c, ids[j], ha="center",
+                    va="center", color="white", fontsize=7)
         cum += s[j]
 ax.axvline(P.shift_hours, color="#b23a3a", ls="--", lw=1)
 ax.text(P.shift_hours, -0.9, f" {P.shift_hours:g} h shift", color="#b23a3a", fontsize=8)
 ax.set_yticks(range(len(opt.schedule)))
 ax.set_yticklabels([f"Crew {c + 1}" for c in sorted(opt.schedule)])
 ax.set_xlabel("Hours from start of shift")
-ax.set_title("Optimal dispatch plan (light = travel, dark = repair)")
+ax.set_title("Optimal dispatch plan\n(light = travel to and from base, dark = repair on site)")
 ax.invert_yaxis()
 fig.savefig(FIG / "fig1_schedule.png")
 plt.close(fig)
