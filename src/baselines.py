@@ -236,16 +236,25 @@ def local_search(schedule, travel, job_time, zones, floors, weights, params,
     if best is None:
         return None
 
+    # First-improvement with restart. The schedule is REPLACED on every accepted
+    # move, so the loop must restart rather than keep iterating over a stale
+    # snapshot -- doing otherwise tries to relocate a fault that has already
+    # moved and raises ValueError from list.remove.
     for _ in range(max_passes):
         improved = False
-        crews = list(cur)
-        for a in crews:
-            for j in list(cur[a]):
+        for a in list(cur):
+            if improved:
+                break
+            for j in list(cur.get(a, [])):
+                if improved:
+                    break
                 # relocate j into another crew
                 for b in range(params.n_crews):
                     if b == a:
                         continue
                     cand = {k: list(v) for k, v in cur.items()}
+                    if j not in cand.get(a, []):
+                        continue
                     cand.setdefault(b, [])
                     cand[a].remove(j)
                     cand[b].append(j)
@@ -254,13 +263,16 @@ def local_search(schedule, travel, job_time, zones, floors, weights, params,
                     sc = evaluate(cand, travel, job_time, zones, floors, weights, params)
                     if sc and sc["objective"] < best["objective"] - 1e-12:
                         cur, best, improved = cand, sc, True
+                        break
+                if improved:
+                    break
                 # swap j with a fault in another crew
-                for b in crews:
-                    if b == a or a not in cur or j not in cur.get(a, []):
+                for b in list(cur):
+                    if b == a:
                         continue
                     for j2 in list(cur.get(b, [])):
                         cand = {k: list(v) for k, v in cur.items()}
-                        if j not in cand[a] or j2 not in cand[b]:
+                        if j not in cand.get(a, []) or j2 not in cand.get(b, []):
                             continue
                         cand[a].remove(j)
                         cand[b].remove(j2)
@@ -272,6 +284,9 @@ def local_search(schedule, travel, job_time, zones, floors, weights, params,
                                       weights, params)
                         if sc and sc["objective"] < best["objective"] - 1e-12:
                             cur, best, improved = cand, sc, True
+                            break
+                    if improved:
+                        break
         if not improved:
             break
     return cur

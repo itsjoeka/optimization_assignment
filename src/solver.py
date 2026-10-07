@@ -147,8 +147,19 @@ def solve(travel, repair, zones, floors, weights, params, *,
     elapsed = time.time() - t0
     status = pulp.LpStatus[prob.status]
 
+    # PuLP reports 'Optimal' whenever CBC returns a feasible solution, INCLUDING
+    # when CBC stopped on its time limit without proving optimality. Reporting
+    # that as a proven optimum in a paper would be wrong, so a solve that ran to
+    # the limit is relabelled. It is a genuine incumbent, just not a proven one.
+    solve_only = elapsed - enum_seconds
+    hit_limit = time_limit is not None and solve_only >= 0.98 * time_limit
+    if hit_limit and status == "Optimal":
+        status = "Feasible (time limit)"
+    meta["hit_time_limit"] = bool(hit_limit)
+    meta["solve_seconds"] = solve_only
+
     schedule, reported = {}, {}
-    if status == "Optimal":
+    if status in ("Optimal", "Feasible (time limit)"):
         chosen = [i for i in lam if lam[i].varValue and lam[i].varValue > 0.5]
         for crew, i in enumerate(chosen):
             schedule[crew] = list(columns[i].faults)
@@ -171,7 +182,8 @@ def solve(travel, repair, zones, floors, weights, params, *,
 
     return Solution(
         status=status, schedule=schedule, reported=reported,
-        objective=pulp.value(prob.objective) if status == "Optimal" else None,
+        objective=(pulp.value(prob.objective)
+                   if status in ("Optimal", "Feasible (time limit)") else None),
         solve_seconds=elapsed, n_variables=len(prob.variables()),
         n_constraints=len(prob.constraints), columns=meta,
     )

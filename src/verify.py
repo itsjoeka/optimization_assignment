@@ -85,7 +85,10 @@ def check_solution(schedule, reported, travel, job_time, zones, floors, weights,
     Returns the recomputation so callers can use trustworthy numbers.
     """
     # 1. Solver status -- parsed, never assumed.
-    if status != "Optimal":
+    # "Feasible (time limit)" is accepted because the schedule is still a real,
+    # checkable solution; it simply is not a PROVEN optimum, and anything
+    # reporting it must say so rather than claim optimality.
+    if status not in ("Optimal", "Feasible (time limit)"):
         raise VerificationError(f"solver status is {status!r}, not 'Optimal'")
 
     # 2. Coverage: every fault served exactly once.

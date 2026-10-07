@@ -1,52 +1,62 @@
 [
  {
   "n": 15,
-  "m": 5,
+  "m": 6,
+  "utilisation_pct": 83.66249999999998,
+  "total_work_h": 40.157999999999994,
   "n_columns": 1635,
   "total_possible": 2955,
-  "enumerate_seconds": 0.005799531936645508,
-  "status": "Infeasible",
-  "solve_seconds": 0.0649871826171875,
-  "mean_response": null
+  "enumerate_seconds": 0.005544900894165039,
+  "status": "Optimal",
+  "solve_seconds": 1.0499718189239502,
+  "mean_response": 1.8709333333333336
  },
  {
   "n": 24,
-  "m": 8,
+  "m": 10,
+  "utilisation_pct": 89.8625,
+  "total_work_h": 71.89,
   "n_columns": 4676,
   "total_possible": 12720,
-  "enumerate_seconds": 0.020180225372314453,
-  "status": "Infeasible",
-  "solve_seconds": 0.2064831256866455,
-  "mean_response": null
+  "enumerate_seconds": 0.018787384033203125,
+  "status": "Optimal",
+  "solve_seconds": 139.96410155296326,
+  "mean_response": 2.0764166666666672
  },
  {
   "n": 30,
-  "m": 10,
+  "m": 14,
+  "utilisation_pct": 92.3482142857143,
+  "total_work_h": 103.43000000000002,
   "n_columns": 5224,
   "total_possible": 25260,
-  "enumerate_seconds": 0.021379470825195312,
-  "status": "Infeasible",
-  "solve_seconds": 0.2256484031677246,
-  "mean_response": null
+  "enumerate_seconds": 0.020871400833129883,
+  "status": "Optimal",
+  "solve_seconds": 235.08892965316772,
+  "mean_response": 1.6841333333333328
  },
  {
   "n": 45,
-  "m": 15,
+  "m": 19,
+  "utilisation_pct": 90.58815789473684,
+  "total_work_h": 137.694,
   "n_columns": 29861,
   "total_possible": 87165,
-  "enumerate_seconds": 0.19921278953552246,
-  "status": "Infeasible",
-  "solve_seconds": 1.612886905670166,
-  "mean_response": null
+  "enumerate_seconds": 0.20597100257873535,
+  "status": "Optimal",
+  "solve_seconds": 601.2097148895264,
+  "mean_response": 1.8919777777777778
  },
  {
   "n": 60,
-  "m": 20,
+  "m": 26,
+  "utilisation_pct": 92.93557692307688,
+  "total_work_h": 193.30599999999993,
   "n_columns": 62708,
   "total_possible": 208920,
-  "enumerate_seconds": 0.3413727283477783,
-  "status": "Infeasible",
-  "solve_seconds": 4.1900315284729,
-  "mean_response": null
+  "enumerate_seconds": 0.34590935707092285,
+  "status": "Optimal",
+  "solve_seconds": 26.931848287582397,
+  "mean_response": 1.6436999999999997
  }
 ]
