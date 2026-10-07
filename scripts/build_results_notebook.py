@@ -688,7 +688,11 @@ ax.text(P.shift_hours, -0.9, f" {P.shift_hours:g} h shift", color="#b23a3a", fon
 ax.set_yticks(range(len(opt.schedule)))
 ax.set_yticklabels([f"Crew {c + 1}" for c in sorted(opt.schedule)])
 ax.set_xlabel("Hours from start of shift")
-ax.set_title("Optimal dispatch plan\n(light = travel to and from base, dark = repair on site)")
+from matplotlib.patches import Patch
+ax.legend(handles=[Patch(facecolor="#9fb3c8", label="travel to/from base"),
+                   Patch(facecolor="#2f6f9f", label="repair on site")],
+          loc="lower right", fontsize=7, framealpha=0.9)
+ax.set_title("Optimal dispatch plan")
 ax.invert_yaxis()
 fig.savefig(FIG / "fig1_schedule.png")
 plt.close(fig)
@@ -760,6 +764,25 @@ nb = {
     "nbformat_minor": 5,
 }
 
+# Refuse to write a notebook whose code cells do not parse. A newline escape
+# that does not survive this file's own triple-quoted strings silently splits a
+# string literal across two lines, and the only symptom is a notebook that
+# executes to nothing.
+import ast as _ast
+
+_bad = []
+for _i, _c in enumerate(cells):
+    if _c["cell_type"] != "code":
+        continue
+    try:
+        _ast.parse("".join(_c["source"]))
+    except SyntaxError as _e:
+        _bad.append((_i, _e.lineno, _e.msg))
+if _bad:
+    for _i, _ln, _msg in _bad:
+        print(f"cell {_i}: SyntaxError at line {_ln}: {_msg}")
+    raise SystemExit("refusing to write: generated cells do not parse")
+
 out = pathlib.Path(__file__).resolve().parent.parent / "notebooks" / "05_manuscript_results.ipynb"
 out.write_text(json.dumps(nb, indent=1))
-print(f"wrote {out} ({len(cells)} cells)")
+print(f"wrote {out} ({len(cells)} cells, all code cells parse)")
