@@ -1,0 +1,52 @@
+[
+ {
+  "n": 15,
+  "m": 5,
+  "n_columns": 1635,
+  "total_possible": 2955,
+  "enumerate_seconds": 0.005799531936645508,
+  "status": "Infeasible",
+  "solve_seconds": 0.0649871826171875,
+  "mean_response": null
+ },
+ {
+  "n": 24,
+  "m": 8,
+  "n_columns": 4676,
+  "total_possible": 12720,
+  "enumerate_seconds": 0.020180225372314453,
+  "status": "Infeasible",
+  "solve_seconds": 0.2064831256866455,
+  "mean_response": null
+ },
+ {
+  "n": 30,
+  "m": 10,
+  "n_columns": 5224,
+  "total_possible": 25260,
+  "enumerate_seconds": 0.021379470825195312,
+  "status": "Infeasible",
+  "solve_seconds": 0.2256484031677246,
+  "mean_response": null
+ },
+ {
+  "n": 45,
+  "m": 15,
+  "n_columns": 29861,
+  "total_possible": 87165,
+  "enumerate_seconds": 0.19921278953552246,
+  "status": "Infeasible",
+  "solve_seconds": 1.612886905670166,
+  "mean_response": null
+ },
+ {
+  "n": 60,
+  "m": 20,
+  "n_columns": 62708,
+  "total_possible": 208920,
+  "enumerate_seconds": 0.3413727283477783,
+  "status": "Infeasible",
+  "solve_seconds": 4.1900315284729,
+  "mean_response": null
+ }
+]

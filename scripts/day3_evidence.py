@@ -354,15 +354,24 @@ json.dump(rows, open(OUT / "multi_instance.json", "w"), indent=1)
 # 5. SCALING (M6)
 # =====================================================================
 print("\n" + "-" * 74)
-print("5. SCALING -- crews scaled as m = ceil(n/3)")
+print("5. SCALING -- crews scaled to hold crew utilisation constant")
 print("-" * 74)
-print("holding m=5 while scaling n makes every instance infeasible on repair")
-print("time alone from n=30 upward, so the rule is stated and applied\n")
+print("Two capacity dimensions must both be respected, and m = ceil(n/Q) covers")
+print("only one of them. It makes m*Q exactly equal n, so every crew must take")
+print("exactly Q faults AND fit the shift -- which puts utilisation above 100%")
+print("at every size here (100.4% at n=15, 129.3% at n=30) and makes the")
+print("instances genuinely infeasible rather than merely hard.")
+print()
+print("Rule applied:  m = max( ceil(n/Q),  ceil(total_work / (H * u)) ),  u = 0.951")
+print("which is the crew utilisation of the published n=15 instance.\n")
+TARGET_UTILISATION = 0.951
 scale = []
 for n in (15, 24, 30, 45, 60):
-    m = math.ceil(n / 3)
-    Pn = Params(n_crews=m)
     fn = generate_faults(n, seed=2000 + n)
+    _work = sum(job_times(fn, round_trip=P.round_trip))
+    m = max(math.ceil(n / P.capacity),
+            math.ceil(_work / (P.shift_hours * TARGET_UTILISATION)))
+    Pn = Params(n_crews=m)
     inn = instance(fn, Pn)
     t0 = time.time()
     cn = enumerate_columns(inn["travel"], inn["job_time"], inn["zones"],
@@ -375,13 +384,15 @@ for n in (15, 24, 30, 45, 60):
         for q in range(sz):
             p *= (n - q)
         total += p
-    msg = (f"    n={n:<3} m={m:<2} | {len(cn):>7}/{total:<9} cols "
+    util = 100 * _work / (m * Pn.shift_hours)
+    msg = (f"    n={n:<3} m={m:<3} util {util:5.1f}% | {len(cn):>7}/{total:<9} cols "
            f"({enum_s:5.2f}s enum) | {sn.status}")
     if rn:
         msg += (f" | mean {rn.weighted_mean_response:.4f} h | "
                 f"solve {sn.solve_seconds - enum_s:6.2f}s")
     print(msg)
-    scale.append({"n": n, "m": m, "n_columns": len(cn), "total_possible": total,
+    scale.append({"n": n, "m": m, "utilisation_pct": util, "total_work_h": _work,
+                  "n_columns": len(cn), "total_possible": total,
                   "enumerate_seconds": enum_s, "status": sn.status,
                   "solve_seconds": sn.solve_seconds - enum_s,
                   "mean_response": rn.weighted_mean_response if rn else None})

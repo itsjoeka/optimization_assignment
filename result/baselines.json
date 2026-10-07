@@ -4,7 +4,7 @@
   "gap": 0.07022222222222285,
   "objective": 1.6582733333333333,
   "makespan": 7.981999999999999,
-  "solve_seconds": 0.22444677352905273
+  "solve_seconds": 0.2524256706237793
  },
  "policies": {
   "random_round_robin": {
