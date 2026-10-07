@@ -1,0 +1,56 @@
+{
+ "optimum": {
+  "mean_response": 2.3388666666666666,
+  "gap": 0.07022222222222285,
+  "objective": 1.6582733333333333,
+  "makespan": 7.981999999999999,
+  "solve_seconds": 0.22444677352905273
+ },
+ "policies": {
+  "random_round_robin": {
+   "n_trials": 5000,
+   "n_feasible": 2,
+   "feasibility_rate": 0.0004,
+   "mean_of_feasible": 2.9901999999999997,
+   "best_of_n": 2.984466666666667,
+   "best_objective": 2.1385199999999998,
+   "mean_gap_of_feasible": 0.5437777777777775
+  },
+  "random_best_order": {
+   "n_trials": 5000,
+   "n_feasible": 2,
+   "feasibility_rate": 0.0004,
+   "mean_of_feasible": 2.299666666666667,
+   "best_of_n": 2.2934,
+   "best_objective": 2.02502,
+   "mean_gap_of_feasible": 1.5605555555555557
+  },
+  "greedy_bfd_repair": {
+   "weighted_mean_response": 2.2823333333333333,
+   "equity_gap": 1.7044444444444444,
+   "makespan": 7.981999999999999,
+   "max_response": 5.231,
+   "zone_excess": {
+    "Far": 2.706,
+    "Near": 1.0015555555555555
+   },
+   "objective": 2.1089666666666664
+  },
+  "greedy_longest_job": null,
+  "greedy_shortest_job": null,
+  "greedy_nearest": null,
+  "greedy_priority": null,
+  "zone_clustered": null,
+  "local_search": {
+   "weighted_mean_response": 2.2867333333333333,
+   "equity_gap": 1.2293333333333336,
+   "makespan": 7.981999999999999,
+   "max_response": 5.133,
+   "zone_excess": {
+    "Far": 2.4253333333333336,
+    "Near": 1.196
+   },
+   "objective": 1.9695133333333332
+  }
+ }
+}
