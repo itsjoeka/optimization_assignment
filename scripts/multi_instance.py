@@ -238,6 +238,13 @@ if len(paired) >= 6:
             print(f"  | {label} | {st.median(diffs):+.4f}{unit} | n/a | {e} |")
     print("\n  Wilcoxon signed-rank rather than a t-test: these paired differences")
     print("  are not normally distributed and the sample is small.")
+    print()
+    print("  READ THE MAGNITUDE, NOT THE p-VALUE. The optimum minimises the very")
+    print("  objective being compared, so it can never lose to a heuristic: the sign")
+    print("  of every difference is fixed by construction and W = 0 simply confirms")
+    print("  that. Significance here is close to automatic and is NOT evidence that")
+    print("  the improvement is large. The median difference is the honest number,")
+    print("  and the paper should lead with it.")
 else:
     print(f"\n  only {len(paired)} paired observations -- too few for a signed-rank test")
 
