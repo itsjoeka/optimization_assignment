@@ -1,0 +1,10 @@
+policy,feasible,mean_response_h,equity_gap_h,objective,feasibility_rate,best_of_n_h
+Best-fit-decreasing + 1-swap repair,True,2.2823333333333333,1.7044444444444444,2.1089666666666664,,
+...then relocate/swap local search,True,2.2867333333333333,1.2293333333333336,1.9695133333333332,,
+Longest-job-first,False,,,,,
+Shortest-job-first,False,,,,,
+Nearest-first,False,,,,,
+Priority-first,False,,,,,
+Zone-clustered crews,False,,,,,
+Round-robin over a shuffle,True,2.9901999999999997,,,0.0004,2.984466666666667
+"Random, best order within crew",True,2.299666666666667,,,0.0004,2.2934
