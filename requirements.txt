@@ -1,0 +1,7 @@
+# Pinned environment for reproducibility.
+# Solver: CBC, bundled with PuLP (pulp.PULP_CBC_CMD). No separate install needed.
+pandas==3.0.6
+numpy==2.3.4
+PuLP==3.3.2
+matplotlib==3.10.8
+scipy==1.16.3

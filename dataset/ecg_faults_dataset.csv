@@ -1,6 +1,6 @@
 Fault_ID,Town,Zone,Distance_km,Travel_time_hours,Fault_type,Repair_time_hours,Priority
 F1,Afadzo South,Far,38.4,1.017,Pole replacement,1.0,High
-F2,Liati,Far,20.0,0.55,Transformer maintenance,0.75,Normal
+F2,Liati,Near,20.0,0.55,Transformer maintenance,0.75,Normal
 F3,Golokwati,Far,21.3,0.5,Transformer maintenance,0.75,High
 F4,Agome yo,Near,15.9,0.517,Network line extension,2.0,Normal
 F5,Logba,Far,38.3,1.0,Network line extension,2.0,Normal
