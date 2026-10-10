@@ -1,0 +1,456 @@
+\documentclass[11pt]{article}
+
+% -------------------- Packages --------------------
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage[a4paper, total={6.5in, 9in}]{geometry}
+\setlength{\parindent}{0pt}
+
+\title{\bfseries Optimal Assignment of ECG Technicians to Electricity Faults Across Multi-Town Service Areas\\}
+
+\author{
+\centering
+\begin{tabular}{c}
+Jonathan Kalami$^{1}$, Sally Gli$^{1}$, Tayyiba Amartey$^{1}$,\\
+Dr. Ali Abubakar$^{2}$, Dr. Bright Owusu$^{2}$ \\
+\\
+$^{1}$National Institute of Mathematical Sciences,\\ Kwame Nkrumah University of Science and Technology, Ghana\\
+$^{2}$Department of Mathematics, College of Science,\\ Kwame Nkrumah University of Science and Technology, Ghana \\
+$^{2}$Department of Mathematics,\\ University of Cape Coast, Ghana
+\end{tabular}
+}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+% -------------------- Abstract --------------------
+\begin{abstract}
+\noindent Electricity distribution in regional towns faces different challenges from distribution in major urban centers such as Accra and Kumasi, where multiple service points provide localized coverage. In Hohoe, a single ECG Operations Department serves more than 23 surrounding towns within a 40-kilometer radius. Heavy rainfall, strong winds, and other adverse weather can damage transformers and power lines in several communities at once, and the operations unit then faces high demand with a fixed number of technician teams. Current assignment practice is manual and ad hoc. It can create geographic inequity: towns farther from the operations center may wait longer for repair than towns nearby, independent of fault severity.
+
+\vspace{0.25cm}
+\noindent We formulate the daily assignment of five technician groups to reported faults as an integer program. Each fault is simulated against a real, field-measured town network; the fault locations, types, and priorities are generated synthetically, since no historical fault log was available for this study. The model assigns faults to groups and orders each group's shift, subject to a capacity limit of three faults per group, an eight-hour shift, and an equity constraint on response time between near and far zones. We show that minimizing total travel time, the natural first objective, is degenerate: under the constraint that every fault is served exactly once, total travel time is the same for every feasible assignment, so a model built on it cannot distinguish a good plan from a bad one. We replace it with weighted mean response time, the time from shift start until a crew reaches each fault, which depends on crew order and is not degenerate.
+
+\vspace{0.25cm}
+\noindent The model solves to a proven optimum in under one second. On the base instance, group capacity and shift length are simultaneously binding: only 0.04\% of 5{,}000 random assignments, and none of five greedy heuristics we tested, produce a feasible plan, while the optimal model returns one directly. Minimizing efficiency alone opens a measurable equity gap between near- and far-zone response time; a 2\% sacrifice in mean response time removes 91\% of this gap. Across 15 independently generated instances, the current five-group establishment is feasible on only 13.3\% of simulated days; the minimum group count needed ranges from five to nine.
+
+\vspace{0.25cm}
+\noindent Optimization secures feasibility and quantifies the price of equity during peak-demand periods in regional utility operations, at a modest cost in efficiency relative to a well-tuned heuristic.
+\end{abstract}
+
+\noindent\textbf{Keywords:}
+Technician assignment, electricity distribution, optimization, equity, operations research
+
+\newpage
+
+% =================================================
+\section*{Introduction}
+% =================================================
+Electricity supports healthcare, education, commerce, transportation, and household activity \cite{Modi2005,Acheampong2021}. As demand for electricity grows, the reliability and timeliness of supply become central to social welfare and economic development \cite{IEA2022,Modi2005}. In Ghana, the Electricity Company of Ghana (ECG) distributes electricity across the southern regions of the country \cite{ECG2023}. ECG maintains power infrastructure, expands the distribution network, and improves customer service through digital technology.
+
+\vspace{0.25cm}
+
+A core responsibility of ECG is the prompt restoration of power after a fault is reported. Rapid repair and restoration sustain the reliability and continuity of supply \cite{Wang2025}. Reported faults include transformer installation and maintenance, cable joining and termination, network line extension, pole replacement, and vegetation control. In district-level operations such as Hohoe, technicians work in fixed groups of three and respond to faults across communities spread over a service radius of roughly 40 kilometers. On a typical day several faults are reported at once from different towns, each requiring a timely response.
+
+\vspace{0.25cm}
+Despite this, technician assignment in Hohoe is largely manual, based on managerial judgment rather than a structured accounting of travel distance, workload, or shift time. This produces two failures. Some groups are overloaded while others are underused, and towns distant from the operations center wait longer for repair than nearby towns, regardless of fault severity. Both failures raise ECG's operating cost and weaken customer confidence in the utility. A systematic decision-support method, applied to this assignment problem, can address both.
+
+\vspace{0.25cm}
+Workforce scheduling for electrical distribution utilities has been studied as an optimization problem \cite{Borba2019}, and technician scheduling with service-time variation has been formulated as a mixed-integer program in other settings \cite{Yu2023,Eles2022}. Equity in technician assignment has also been treated directly as an objective, rather than an afterthought, in multi-shift maintenance operations \cite{Bhaba2024}. This paper applies the same discipline to a single-base, multi-town distribution service area: an identical-parallel-machine assignment problem with a capacity limit, a shift-duration limit, and an explicit equity constraint on response time.
+
+\vspace{0.25cm}
+This study asks how technician groups should be assigned when several faults are reported at once across dispersed communities, and proposes a Technician Group Fault Assignment Optimization Model for ECG Hohoe. The model minimizes mean response time, classifies communities into Near and Far zones by distance from the Hohoe base, and bounds the response-time gap between the two zones so that distant communities are not systematically left waiting. The result is a framework that treats efficiency and equity as two terms of a single, tunable objective rather than as a trade-off left to informal judgment.
+
+\vspace{0.25cm}
+The model is developed for ECG's Hohoe operations, but the formulation generalizes to any district-level utility with a single dispatch base, fixed technician groups, and a shift-duration limit.
+
+% =================================================
+\section*{Methods}
+% =================================================
+
+\subsection*{Study Context and Scope}
+
+This study examines the Operations Department of the Electricity Company of Ghana in Hohoe, Volta Region. The department addresses electrical faults across a service radius of roughly 40 kilometers, covering transformer installation and maintenance, cable joining and termination, network line extension, pole replacement, and vegetation control. When several faults are reported at once, particularly after adverse weather, technician groups are assigned ad hoc, without systematic optimization. This study addresses that gap directly: how to assign available technician groups to reported faults so as to minimize response time while bounding the response-time disparity between geographic zones.
+
+\subsection*{Data Collection}
+\subsubsection*{Primary Data}
+Operational parameters were obtained through a structured interview with ECG Hohoe Operations Department personnel. The department fields 15 technicians in fixed groups of three, giving five technician groups per shift. A shift runs 8 hours, and each group can be assigned at most three faults per shift. Six fault categories and their average repair times were identified (Table~\ref{tab:services}).
+
+\begin{table}[H]
+\centering
+\caption{Service categories and average completion times}
+\label{tab:services}
+\begin{tabular}{l c}
+\toprule
+Service & Average Completion Time (hours) \\
+\midrule
+Transformer installation & 4.00 \\
+Transformer maintenance & 0.75 \\
+Cable joining and termination & 0.33 \\
+Network line extension & 2.00 \\
+Pole replacement & 1.00 \\
+Vegetation control & 4.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Geographic Data}
+
+Service towns were identified from ECG records and confirmed with field personnel. Twenty-three towns within the 40 km service radius were documented, with road distance and travel time from the Hohoe base.\footnote{\textbf{To confirm:} this draft records travel distances and times as collected via the Google Maps API on 9 December 2026. That date falls after the writing of this draft and conflicts with the project's working record, which treats this travel-time data as field-measured by Operations Department personnel (see \texttt{docs/data\_quality.md}). The provenance of this dataset needs to be confirmed by the authors before submission, and this footnote removed once resolved.} Towns are classified Near (road distance $\leq 20$ km from the Hohoe base) or Far ($> 20$ km). This threshold is fixed in advance, independent of the realized fault instance, so that it cannot shift with the data; one town, Liati, sits at exactly 20.0 km and is classified Near under this rule.
+
+Fitting travel time as a linear function of road distance over the town network (one town, Fodome, excluded as a likely transcription error -- 0.65 km recorded against 0.65 h, implying 1.0 km/h) gives
+\[
+t = 0.1595 + 0.02059\,d, \qquad R^2 = 0.896,
+\]
+an intercept of 9.6 minutes and an implied cruising speed of 48.6 km/h. Implied speeds computed directly from distance and time, town by town, range from 1.0 to 47.2 km/h and look like measurement noise in isolation. The regression shows this range is largely a fixed per-trip overhead divided by distances of different length, not noisy data. A separate test of the Near/Far distance cut as a predictor, controlling for distance itself, finds no significant effect at the 20 km threshold used in this study ($F=4.11$, $p=0.057$). Travel time is therefore modeled by distance alone.
+
+\subsubsection*{Simulated Fault Dataset}
+
+No historical fault log was available for this study under ECG's confidentiality policy, so a simulated fault dataset was generated to reflect a high-demand operational day. Fifteen faults were drawn against the real town network to match maximum daily capacity (five groups, three faults each), using Python's random-number generator with a fixed seed (seed = 60) for reproducibility. Each fault's town was drawn uniformly across the 23 towns; its service type was drawn from the frequencies in Table~\ref{tab:weights}; its priority was drawn High with probability 0.30 and Normal with probability 0.70. These frequencies reflect the project team's operational experience rather than a measured fault log, and should be read as a modeling assumption, not a verified distribution.
+
+\begin{table}[H]
+\centering
+\caption{Assumed fault-type frequencies used to generate the simulated instance}
+\label{tab:weights}
+\begin{tabular}{l c}
+\toprule
+Service & Weight (\%) \\
+\midrule
+Transformer maintenance & 25 \\
+Cable joining and termination & 20 \\
+Transformer installation & 15 \\
+Network line extension & 15 \\
+Vegetation control & 15 \\
+Pole replacement & 10 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The resulting 15-fault instance spans 12 distinct towns, splits 9 Near and 6 Far, and includes 5 High-priority faults, 4 of which fall in Far-zone towns. This last fact is a property of this particular draw, not of any relationship between urgency and distance, and is controlled for explicitly in Section~\ref{sec:priority}.
+
+% =================================================
+\section*{Mathematical Model Formulation}
+% =================================================
+
+\subsection*{Problem Definition}
+We formulate the daily assignment of technician groups to faults as an integer program with two objectives: minimizing mean response time, and bounding the gap in response time between geographic zones. The sets, parameters, and decision variables are given in Tables~\ref{tab:index_sets}--\ref{tab:policy_parameters}.
+
+\subsection*{Sets and Indices}
+\begin{table}[h!]
+\centering
+\caption{Index sets for the Technician Group Fault Assignment Model}
+\label{tab:index_sets}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Index Set} & \textbf{Indices} & \textbf{Description} \\
+\midrule
+$I$ & $\{1, 2, 3, \dots, 5\}$ & Set of technician groups \\
+$J$ & $\{1, 2, 3, \dots, 15\}$ & Set of reported faults \\
+$K$ & $\{1, 2, 3\}$ & Set of service positions within a group's shift \\
+$Z$ & $\{\text{Near, Far}\}$ & Set of geographic zones \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Parameters}
+\begin{table}[h!]
+\centering
+\caption{Operational Parameters for the Technician Group Fault Assignment Model}
+\label{tab:operational_parameters}
+\begin{tabular}{l l}
+\toprule
+\textbf{Parameter} & \textbf{Description} \\
+\midrule
+$t_j$ & One-way travel time from the Hohoe base to fault $j$ \\
+$r_j$ & Repair time for fault $j$ \\
+$s_j = 2t_j + r_j$ & Total shift occupancy of fault $j$: travel out, repair, travel back \\
+$z_j$ & Geographic zone of fault $j$ ($z_j \in Z$) \\
+$Q = 3$ & Maximum number of faults a technician group can handle per shift \\
+$H = 8$ & Shift duration in hours \\
+$\bar\tau^{N}, \bar\tau^{F}$ & Mean one-way travel time within each zone (the zone's geographic floor) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Policy Parameters for the Technician Group Fault Assignment Model}
+\label{tab:policy_parameters}
+\begin{tabular}{l p{10cm}}
+\toprule
+\textbf{Parameter} & \textbf{Description} \\
+\midrule
+$\theta \geq 1$ & Equity tolerance: maximum allowable ratio between each zone's excess wait \\
+$\alpha$ & Weight on the efficiency objective ($0 \leq \alpha \leq 1$) \\
+$\beta$ & Weight on the equity objective ($\beta = 1 - \alpha$) \\
+$w_j$ & Priority weight for fault $j$ ($w_j = 1$ throughout, except where noted in Section~\ref{sec:priority}) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Decision Variables}
+
+The decision variable is $y_{ijk}$, where
+\[
+y_{ijk} =
+\begin{cases}
+1, & \text{if group } i \text{ serves fault } j \text{ at position } k \text{ of its shift},\\
+0, & \text{otherwise.}
+\end{cases}
+\]
+$R_j \geq 0$ denotes the response time of fault $j$: the time elapsed from shift start until a crew arrives at fault $j$. $G \geq 0$ denotes the equity gap between zones.
+
+\subsection*{Why Total Travel Time Fails as an Objective}
+
+A first, natural objective minimizes total travel time, $\sum_i \sum_j t_j x_{ij}$, where $x_{ij} = \sum_k y_{ijk}$. Under the requirement that every fault is served by exactly one group,
+\[
+\sum_{i} x_{ij} = 1 \quad \forall j \in J,
+\]
+this objective reduces to
+\[
+\sum_{i}\sum_{j} t_j x_{ij} = \sum_{j} t_j\left(\sum_i x_{ij}\right) = \sum_{j} t_j,
+\]
+a constant, independent of the assignment, because $t_j$ depends only on which fault is served, never on which group serves it or in what order. On the base instance this constant equals 8.985 hours for every feasible assignment. A solver given this objective has nothing to optimize and returns an arbitrary feasible point. Any objective that is additively separable in the fault index alone fails the same way, since the coverage requirement sums it to the same constant regardless of assignment.
+
+\subsection*{The Response-Time Objective}
+
+We instead minimize weighted mean response time, where response time depends on both the assignment and the order in which a group works its faults. If group $i$ serves faults in the order $(j_1, \ldots, j_k)$,
+\[
+R_{j_1} = t_{j_1}, \qquad R_{j_p} = t_{j_p} + \sum_{q=1}^{p-1}\left(r_{j_q} + 2t_{j_q}\right) \quad (p \geq 2).
+\]
+A fault served later in a group's shift waits for every job ahead of it to be completed and for the group to return to base and depart again, so no additive decomposition over faults alone exists: each fault's contribution to total response time depends on which other faults share its group and in what order. On the base instance, minimizing and maximizing mean response time over the complete feasible set gives 2.300 h and 3.908 h respectively, a spread of 69.9\%, confirming the objective is not degenerate.
+
+\begin{equation}
+\text{Minimize } Z = \alpha \cdot \frac{1}{W}\sum_{j\in J} w_j R_j + \beta \cdot G, \qquad W = \sum_j w_j.
+\end{equation}
+
+\subsection*{Equity Constraint}
+
+Minimizing mean response time alone biases dispatch toward short, nearby faults, since this reduces average waiting fastest. Far-zone towns are farther from the base by construction, so equalizing \emph{raw} response time between zones can only be achieved by delaying Near-zone customers -- a levelling-down outcome that improves service for no one. We instead define equity on excess wait, the response time in excess of each zone's unavoidable travel floor:
+\begin{equation}
+E^{z} = \bar{R}^{z} - \bar\tau^{z}, \qquad z \in \{N, F\},
+\end{equation}
+where $\bar{R}^{z}$ is the mean response time of faults in zone $z$ under a given assignment. $E^z$ isolates the delay attributable to the dispatch decision from the delay attributable to geography.
+
+The equity gap and its constraint are both two-sided:
+\begin{equation}
+G \geq E^{F} - E^{N}, \qquad G \geq E^{N} - E^{F},
+\end{equation}
+\begin{equation}
+E^{F} \leq \theta\, E^{N}, \qquad E^{N} \leq \theta\, E^{F}.
+\end{equation}
+A one-sided constraint would let the model satisfy equity by inflating $E^N$ instead of compressing $E^F$ -- the same failure in a different form. The two-sided cap is well posed only for $\theta \geq 1$. Combining both inequalities gives $E^F \leq \theta^2 E^F$, which holds only if $\theta \geq 1$, or if $E^F = E^N = 0$. The model implementation rejects $\theta < 1$ directly, rather than returning a misleading infeasible result.
+
+\subsection*{Constraints}
+
+\paragraph{Coverage.} Every fault is served exactly once:
+\begin{equation}
+\sum_{i \in I}\sum_{k \in K} y_{ijk} = 1, \quad \forall j \in J.
+\end{equation}
+
+\paragraph{One fault per position.} A group occupies at most one fault per service position:
+\begin{equation}
+\sum_{j \in J} y_{ijk} \leq 1, \quad \forall i \in I,\ k \in K.
+\end{equation}
+
+\paragraph{No idle gaps.} A group cannot leave position $k$ empty and fill position $k+1$:
+\begin{equation}
+\sum_{j \in J} y_{ijk} \geq \sum_{j \in J} y_{i,j,k+1}, \quad \forall i \in I,\ k < Q.
+\end{equation}
+
+\paragraph{Shift limit.} Total occupancy per group cannot exceed the shift:
+\begin{equation}
+\sum_{j \in J}\sum_{k \in K} s_j\, y_{ijk} \leq H, \quad \forall i \in I.
+\end{equation}
+
+Response time $R_j$ is pinned by equality to the arrival time implied by the chosen $y_{ijk}$, rather than bounded only from below. A one-sided bound lets $R_j$ reach its true value solely because the efficiency term pushes it down; whenever that pressure is absent, as under $\beta=1$ or a fixed efficiency budget, the model can satisfy the equity constraint by inflating $R_j$ without any corresponding change in the schedule. An earlier formulation considered during this project's development had exactly this defect, reporting an equity gap of 0.000 against a true recomputed gap of 0.588 h. The solution method in the next section avoids it by construction: $R_j$ is computed directly from the schedule, never chosen by the solver.
+
+% =================================================
+\section*{Solution Method}
+% =================================================
+
+The constraints above can be encoded directly as a compact mixed-integer program, using a standard big-$M$ formulation to pin $R_j$ by equality. This is a correct and complete statement of the model, and we use it as a cross-check, but it is slow relative to the alternative below: on a 7-fault, 3-group validation instance it takes 2.042 s, against 0.036 s for the method we use to produce every result in this paper.
+
+Because group capacity $Q=3$ is small, the complete set of ordered group workloads of length 1, 2, or 3 can be enumerated directly:
+\[
+15 + 15\cdot14 + 15\cdot14\cdot13 = 2{,}955
+\]
+ordered workloads at the base instance's scale. Each workload's cost -- every fault's response time, total shift occupancy, and contribution to each zone's excess wait -- is computed exactly, in closed form, at enumeration time. Workloads exceeding the 8-hour shift are discarded; 1{,}793 of the 2{,}955 (60.7\%) remain. A set-partitioning problem then selects at most five of these workloads covering every fault exactly once, minimizing the objective above. Because the enumerated column set is complete, the resulting solution is the exact optimum of the original model, not a heuristic or relaxation, and it requires no big-$M$ constant.
+
+We validated this method against the compact formulation on the 7-fault, 3-group instance above: both return objective value 1.335500, agreeing to within $2.22\times10^{-16}$.
+
+Every reported result in this paper was additionally verified by recomputing each fault's response time, both zones' excess wait, the equity gap, the makespan, and each group's shift occupancy directly from the realized schedule, independent of any solver-internal value, and confirming agreement to within $10^{-6}$. This step caught two modeling defects during development, including the equity-gap decoupling described above, and we recommend it as standard practice for any multi-objective optimization model whose secondary objective is not tightly bounded by the primary one.
+
+\section*{Model Implementation}
+
+The model was implemented in Python 3.11 using PuLP (v3.3.2), an open-source linear programming interface, with Pandas for data handling. Decision variables, the objective, and constraints were generated programmatically; the CBC (COIN-OR Branch and Cut) solver was used with default parameters. The solver interface reports a status of ``Optimal'' whenever CBC returns any feasible incumbent, including when CBC was stopped by a wall-clock time limit before its search completed. Larger instances in this paper are therefore reported against CBC's own log, not the interface's label, to avoid overstating a proven optimum.
+
+The complete implementation, including the verification step above, is available in the study's GitHub repository: \url{https://github.com/itsjoeka/optimization_assignment}.
+
+% =================================================
+\section*{Results and Discussion}
+% =================================================
+
+We present the optimal assignment, examine constraint satisfaction, and compare the optimum against conventional dispatch heuristics.
+
+\subsection*{Optimal Assignment Solution}
+
+The model solved to a proven optimum in 0.25 seconds. Table~\ref{tab:optimal} gives the assignment of all 15 faults to the 5 technician groups, in service order, with each fault's response time. Every group is assigned exactly three faults, since group capacity exactly matches the number of faults in this instance ($5 \times 3 = 15$).
+
+\begin{table}[H]
+\centering
+\scalebox{0.72}{
+\begin{tabular}{c l l l l c c c c}
+\toprule
+Group & Fault ID & Town & Zone & Fault Type & Travel (hrs) & Repair (hrs) & Response (hrs) & Occupancy (hrs) \\
+\midrule
+0 & F3  & Golokwati    & Far  & Transformer maintenance        & 0.500 & 0.750 & 0.500 & 1.750 \\
+0 & F1  & Afadzo South & Far  & Pole replacement                & 1.017 & 1.000 & 2.767 & 3.034 \\
+0 & F9  & Santrokofi   & Near & Network line extension          & 0.333 & 2.000 & 5.117 & 2.666 \\
+1 & F6  & Afadzo South & Far  & Cable joining and termination   & 1.017 & 0.330 & 1.017 & 2.364 \\
+1 & F11 & Ve-Dator     & Near & Transformer maintenance         & 0.600 & 0.750 & 2.964 & 1.950 \\
+1 & F4  & Agome yo     & Near & Network line extension          & 0.517 & 2.000 & 4.831 & 3.034 \\
+2 & F7  & Akpafu       & Near & Cable joining and termination   & 0.417 & 0.330 & 0.417 & 1.164 \\
+2 & F2  & Liati        & Near & Transformer maintenance         & 0.550 & 0.750 & 1.714 & 1.850 \\
+2 & F10 & Wli          & Far  & Transformer installation        & 0.483 & 4.000 & 3.497 & 4.966 \\
+3 & F13 & Ve-Kobenu    & Near & Cable joining and termination   & 0.583 & 0.330 & 0.583 & 1.496 \\
+3 & F14 & Agome yo     & Near & Transformer maintenance         & 0.517 & 0.750 & 2.013 & 1.784 \\
+3 & F5  & Logba        & Far  & Network line extension          & 1.000 & 2.000 & 4.280 & 4.000 \\
+4 & F15 & Gbi-Kledzo   & Near & Transformer maintenance         & 0.267 & 0.750 & 0.267 & 1.284 \\
+4 & F8  & Agome yo     & Near & Cable joining and termination   & 0.517 & 0.330 & 1.801 & 1.364 \\
+4 & F12 & Ve-Gbodome   & Far  & Transformer installation        & 0.667 & 4.000 & 3.315 & 5.334 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Optimal assignment of simulated faults to ECG Hohoe technician groups, in service order. Occupancy includes the return trip to base ($2t_j+r_j$).}
+\label{tab:optimal}
+\end{table}
+
+Total one-way travel across all groups is 8.985 hours; total repair time is 20.070 hours; total shift occupancy, including every return trip to base, is 38.040 hours against 40 hours available across five groups -- a utilization of 95.1\%. Group occupancy ranges from 7.280 to 7.982 hours, a spread of 0.702 hours; the tightest group has 0.018 hours of slack remaining in its shift. The optimizer places the two 4-hour transformer-installation faults (F10, F12) each alongside two short-duration faults, so that no group's shift is forced over the 8-hour limit.
+
+\subsection*{Constraint Satisfaction}
+
+\subsubsection*{Capacity}
+
+All five groups are assigned exactly three faults, satisfying $Q=3$ with no slack: capacity exactly equals demand at this instance size.
+
+\subsubsection*{Shift Duration}
+
+Every group completes its assigned faults within the 8-hour shift. Average utilization across groups is 95.1\%, and the tightest group has 0.018 hours, roughly one minute, of remaining capacity. This leaves little buffer against delay, travel-time uncertainty, or an additional fault arriving mid-shift. Section~\ref{sec:resourcing} returns to this directly: at the current five-group establishment, most simulated days do not admit a feasible assignment at all.
+
+\subsubsection*{Geographic Equity}
+
+At the optimum, mean response time is 2.189 h in Near-zone towns and 2.563 h in Far-zone towns -- a raw ratio of 1.17. Measured on excess wait, the quantity the equity constraint actually bounds, Near-zone excess wait is 1.712 h and Far-zone excess wait is 1.782 h, an equity gap of 0.070 h. The equity cap at $\theta=1.6$ is slack at this optimum: it does not bind until $\theta$ is tightened to 1.0, at which point the gap is driven to zero at a 10.2\% cost in mean response time. Minimizing efficiency alone, with no equity term, produces a materially larger gap of 0.676 h, confirming that the disparity is a property of the efficiency objective and not an artifact of this particular instance.
+
+Tracing the trade-off directly: a 2\% sacrifice in mean response time, relative to the pure-efficiency optimum, removes 91\% of this gap (0.676 h to 0.061 h); a 5\% sacrifice removes 99.8\% of it. On this network, equitable dispatch is not an expensive trade-off against efficiency. It is a small, nearly free adjustment to it, and the correct response to an efficiency-only policy's bias is to add the equity term, not to accept the disparity as a cost of doing business.
+
+\subsection*{Baseline Comparison}
+
+The optimal assignment was compared against seven dispatch policies: uniform random assignment (5{,}000 draws), the same random assignment with each group's faults re-ordered optimally, and five deterministic greedy rules (shortest-job-first, longest-job-first, nearest-town-first, priority-first, zone-clustered assignment), plus a local-search refinement seeded from the best feasible greedy solution.
+
+Random assignment produces a feasible plan, respecting both the shift limit and the capacity limit, in only 0.04\% of 5{,}000 draws (2 of 5{,}000). None of the five deterministic greedy rules produces a feasible plan at all: each either front-loads short faults and strands a long one with insufficient remaining capacity in every group, or produces an unbalanced split that exceeds the shift limit somewhere. Only a bin-packing heuristic explicitly designed to repair an infeasible partial assignment succeeds, and its local-search refinement succeeds alongside it.
+
+This result explains an anomaly that would otherwise be easy to misread. Total travel time is identical, 8.985 hours, under both the optimal assignment and any feasible random draw, which might appear to show that aggregate travel-time metrics cannot distinguish assignment quality. The explanation is not a general limit of aggregate metrics: it is the degeneracy proven in the Mathematical Model Formulation section. Total travel time is invariant to the assignment by construction, so no comparison on that measure can be informative, which is exactly why we optimize and report response time instead.
+
+Where a feasible heuristic plan exists, it is not dominated on efficiency: the repair-based heuristic achieves a mean response time of 2.282 h, and its local-search refinement 2.287 h, both marginally better than the optimum's 2.339 h. Both, however, are far less equitable, with equity gaps of 1.704 h and 1.229 h against the optimum's 0.070 h -- an order of magnitude worse on the dimension this study treats as central. Reporting the combined objective rather than mean response time alone shows the optimum ahead of both by 27\% and 19\% respectively. We read this as confirmation that equity is not a free byproduct of an efficient heuristic and must be modeled explicitly, not as evidence that optimization delivers a large efficiency gain on its own.
+
+\subsection*{Priority Service Guarantees}
+\label{sec:priority}
+
+Four of the five High-priority faults in the base instance fall in Far-zone towns, a property of this particular random draw. Raising the weight on High-priority faults therefore moves the Far/Near response ratio downward on its own (1.170 at weight 1, falling to 1.145 at weight 3), with no equity mechanism doing any of that work. Every equity result reported above uses weight 1 for this reason; priority weighting is reported here separately, not folded into the equity analysis.
+
+A hard response-time guarantee for High-priority faults is directly testable against the current establishment. A 2.5-hour guarantee is achievable at an 11.7\% cost in mean response time; a 2.0-hour guarantee is provably infeasible with five groups, regardless of dispatch policy. This gives ECG Hohoe a precise answer to a question that would otherwise be settled by judgment alone: whether a proposed service standard can be met, and at what cost, under the current establishment.
+
+\subsection*{Resourcing: Generalizing Beyond One Instance}
+\label{sec:resourcing}
+
+A single instance cannot establish how representative these results are. We generated 15 additional instances, independently seeded, against the same town network, and repeated the analysis on each.
+
+With the current five-group establishment, only 2 of the 15 instances (13.3\%, Wilson 95\% CI [3.7\%, 37.9\%]) admit any feasible assignment. Required shift-hours across the 15 instances average 47.7 h against 40 h available. On most simulated days, no assignment exists under the current establishment, regardless of dispatch policy: this is a resourcing conclusion, not a limitation of the optimization method. Computing, for each instance, the minimum group count admitting a feasible assignment, the median is 7 and the range is 5 to 9; raising the establishment from five to seven groups would make 80\% of simulated days feasible, and nine groups would cover all fifteen.
+
+Solved at each instance's own minimum feasible group count, the exact optimum's combined-objective advantage over the local-search heuristic has a median of 0.39\% across the 14 instances where both are feasible (Wilcoxon signed-rank, $p=0.005$); the efficiency and equity components are not individually significant on their own. Because the optimum by construction cannot lose on the quantity it minimizes, this test is close to automatically significant whenever any difference exists at all; the magnitude, not the $p$-value, is the informative number, and it confirms the modest efficiency gain reported in the base-instance comparison above.
+
+The method scales past the base instance. At $n=60$ faults with 26 groups, holding utilization near 93\%, the model solves to a proven optimum in 29 seconds. An intermediate instance at $n=45$ did not complete its search within a 600-second budget, but reached a 0.0\% gap; its best-found solution is very likely optimal, though not formally proven. Solve time does not grow smoothly with instance size: it depends on how tightly a given instance's workloads pack, not on fault count alone.
+
+% =================================================
+\section*{Limitations}
+% =================================================
+Fault instances in this study are simulated against a real town network; the fault-type and priority distributions used to generate them are the project team's operational assumption, not a measured record. Crews are modeled as returning to the Hohoe base between every two faults; operational input gathered during this study indicates crews may travel directly between sites in some circumstances, which would recast the problem as vehicle routing rather than parallel-machine scheduling, and is the natural next extension. All faults are assumed known at shift start, though faults may in practice be reported during the shift. Travel times are deterministic, with no seasonal or weather-driven variation modeled. The model treats faults as electrically independent, with no feeder-level dependency between them. Shift length, group capacity, and the five-group establishment are stated by the project team as representative of current practice and have not yet been independently confirmed against ECG's own operating standard.
+
+% =================================================
+\section*{Conclusion}
+% =================================================
+This study formulates the daily assignment of ECG Hohoe technician groups to reported faults as an integer program, and shows that the natural objective, total travel time, is degenerate under the requirement that every fault be served exactly once: it is the same for every feasible assignment and cannot be optimized. Replacing it with weighted mean response time, and bounding the gap in excess wait between Near and Far zones, produces a model that solves to a proven optimum in under a second and distinguishes assignment quality meaningfully (a 69.9\% spread between the best and worst feasible plan, against 0.0\% for total travel time).
+
+On the simulated base instance, group capacity and shift duration bind simultaneously: only 0.04\% of random assignments, and none of five greedy rules tested, produce a feasible plan, while the optimal model returns one directly, with every group assigned exactly three faults and shift utilization at 95.1\%. Minimizing efficiency alone opens a measurable equity gap between zones; a 2\% sacrifice in mean response time removes 91\% of it. Against a well-tuned heuristic the optimum's efficiency advantage is modest, a result we report candidly rather than overstate, since the stronger, better-supported claims of this study are feasibility and the quantified, inexpensive cost of fairness, not a large efficiency gain. Generalizing across 15 simulated instances, the current five-group establishment is feasible on only 13.3\% of days; a seven-group establishment would cover 80\%.
+
+For ECG Hohoe, and regional operations facing similar resource constraints during weather-driven demand surges, this model gives a daily planning tool that states, precisely, whether a feasible assignment exists, what a stated equity standard costs in efficiency, and how many technician groups a given level of service reliability actually requires.
+
+\section*{Data Availability}
+All data used in this study, including the field-measured town network, the simulated fault dataset, the optimization code, and the full result set, are available in the study's GitHub repository: \url{https://github.com/itsjoeka/optimization_assignment}.
+
+% =================================================
+% \section*{References}
+% =================================================
+
+\begin{thebibliography}{9}
+
+\bibitem{ECG2023}
+Electricity Company of Ghana. (2023).
+\textit{Corporate profile and operational mandate}.
+\url{https://www.ecg.com.gh}
+
+\bibitem{Modi2005}
+Modi, V., McDade, S., Lallement, D., \& Saghir, J. (2005).
+Energy services for the Millennium Development Goals.
+\textit{Energy Policy}, 34(18), 2037--2051.
+\url{https://doi.org/10.1016/j.enpol.2005.03.008}
+
+\bibitem{Acheampong2021}
+Acheampong, A. O., Erdiaw-Kwasie, M. O., \& Abunyewah, M. (2021).
+Does energy accessibility improve human development? Evidence from Africa.
+\textit{Energy Economics}, 103, 105610.
+\url{https://doi.org/10.1016/j.eneco.2021.105610}
+
+\bibitem{IEA2022}
+International Energy Agency. (2022).
+\textit{Electricity market report}.
+\url{https://www.iea.org}
+
+\bibitem{Wang2025}
+Wang, H., Lu, S., Jiang, Y., Shi, Y., Song, C., \& Liu, G. (2025).
+A collaborative framework for rapid fault repair and service restoration in distribution networks.
+\textit{International Journal of Intelligent Networks}.
+\url{https://doi.org/10.1016/j.ijin.2025.11.006}
+
+\bibitem{Brown2009}
+Brown, R. E. (2009). Electric power distribution reliability (2nd ed.). CRC Press.
+
+\bibitem{Borba2019}
+Borba, B. S. M. C., Fortes, M. Z., Bitencourt, L. A., Ferreira, V. H., Maciel, R. S., Guimaraens, M. A. R., Lima, G. B. A., Barboza, E. U., Henriques, H. O., Bergiante, N. C. R., \& Moreira, B. S. (2019). A review on optimization methods for workforce planning in electrical distribution utilities.
+\textit{Computers \& Industrial Engineering}, 135, 286--298.
+\url{https://doi.org/10.1016/j.cie.2019.06.002}
+
+\bibitem{Yu2023}
+Yu, V. F., Lin, Y.-S., Jodiawan, P., Lin, S.-W., \& Lai, Y.-C. (2023).
+The Field Technician Scheduling Problem with Experience-Dependent Service Times.
+\textit{Mathematics}, 11(21), 4562.
+\url{https://doi.org/10.3390/math11214562}
+
+\bibitem{Eles2022}
+Éles, A., Heckl, I., \& Cabezas, H. (2022). New general mixed-integer linear programming model for mobile workforce management. \textit{Optimization and Engineering}, 23, 1--47.
+\url{https://doi.org/10.1007/s11081-021-09597-0}
+
+\bibitem{Bhaba2024}
+Tusar, I., \& Sarker, B. (2024). Technician assignment in multi-shift maintenance schedules in an offshore wind farm. \textit{Renewable Energy Focus}, 51, 100616.
+\url{https://doi.org/10.1016/j.ref.2024.100616}
+
+\end{thebibliography}
+
+\end{document}
