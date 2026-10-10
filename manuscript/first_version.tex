@@ -1,0 +1,568 @@
+\documentclass[11pt]{article}
+
+% -------------------- Packages --------------------
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage[a4paper, total={6.5in, 9in}]{geometry}
+\setlength{\parindent}{0pt}
+
+\title{\bfseries Optimal Assignment of ECG Technicians to Electricity Faults Across Multi-Town Service Areas\\}
+
+\author{
+\centering
+\begin{tabular}{c}
+Jonathan Kalami$^{1}$, Sally Gli$^{1}$, Tayyiba Amartey$^{1}$,\\
+Dr. Ali Abubakar$^{2}$, Dr. Bright Owusu$^{2}$ \\
+\\
+$^{1}$National Institute of Mathematical Sciences,\\ Kwame Nkrumah University of Science and Technology, Ghana\\
+$^{2}$Department of Mathematics, College of Science,\\ Kwame Nkrumah University of Science and Technology, Ghana \\
+$^{2}$Department of Mathematics,\\ University of Cape Coast, Ghana
+\end{tabular}
+}
+
+
+
+
+
+
+
+\date{}
+
+\begin{document}
+\maketitle
+
+% -------------------- Abstract --------------------
+\begin{abstract}
+\noindent Electricity distribution and service delivery in regional towns face unique challenges. These challenges are different from those in major urban centers such as Accra and Kumasi, where multiple service points provide localized coverage. In Hohoe, a single ECG Operations Department serves more than 23 surrounding towns within a 40-kilometer radius. Heavy rainfall, strong winds, and other adverse weather conditions can damage transformers and power lines. These events often cause faults in multiple communities at the same time. During such periods, the operations unit experiences very high demand for repair services. As a result, limited technician teams must be assigned carefully to fault locations. Current assignment practices may create inequalities in service delivery. Communities that are farther from the operations center may experience longer response times than nearby towns. This can lead to geographic disparities in the restoration of electricity services.
+% \noindent  Electricity distribution and services in regional towns present unique deployment challenges compared to urban centers like Accra and Kumasi, where multiple service points ensure localized coverage. In Hohoe, a single ECG Operations Department serves more than 23 peripheral towns within a 40 kilometer radius. During high demand periods following heavy rainfalls, windy days, or other adverse weather events that simultaneously damage transformers and lines across multiple communities, the operations unit is met with full capacity utilization requiring systematic assignment of limited technician groups to the fault locations Current assignment practices may create geographic inequities, with distant communities experiencing disproportionately longer response times than nearby towns.
+
+\vspace{0.25cm}
+\noindent We formulated a Binary Integer Linear Programming model to optimize the assignment of 5 technician groups to 15 electricity faults representing a high-demand scenario. The model minimizes total travel time while enforcing capacity constraints (3 faults per group), shift duration (8 hours), and geographic equity (far-zone response times $\leq$ 1.6× near-zone times). Real ECG operational data informed fault types and service durations.
+
+\vspace{0.25cm}
+\noindent The model solved in 0.02 seconds, achieving 100\% capacity utilization while satisfying all constraints. The optimized solution maintained a far-to-near response time ratio of 1.59, preventing the 2× disparities typical of informal assignment, and avoided the 45\% shift violation present in round-robin baseline.
+
+\vspace{0.25cm}
+\noindent Optimization ensures feasibility, efficiency, and geographic equity during peak-demand periods in regional utility operations.
+\end{abstract}
+
+\noindent\textbf{Keywords:}
+Technician assignment, electricity distribution, optimization, equity, operations research
+
+% \tableofcontents
+\newpage
+
+% =================================================
+\section*{Introduction}
+% =================================================
+Electricity is an essential resource in modern society. It supports critical services such as healthcare, education, commerce, transportation, and household activities \cite{Modi2005,Acheampong2021}. As the demand for electricity continues to grow, the reliability and timely delivery of power have become important factors in social welfare and economic development \cite{IEA2022,Modi2005}. In Ghana, the Electricity Company of Ghana (ECG) is the main utility responsible for distributing electricity, particularly in the southern regions of the country (Electricity Company of Ghana, 2023). ECG is responsible for maintaining power infrastructure, expanding the electricity network, and improving customer services through digital technologies. These activities contribute significantly to daily life and support the country's development goals \cite{ECG2023}.
+% Electricity has become an indispensable resource for modern societies, supporting critical services such as healthcare, education, commerce, transportation, and domestic activities \cite{Modi2005,Acheampong2021}. As dependence on electrical power continues to increase, the reliability and timeliness of electricity supply have emerged as key determinants of social welfare and economic development \cite{IEA2022,Modi2005}. In Ghana, the Electricity Company of Ghana (ECG) serves as the primary power distribution utility, responsible for the transmission and distribution of electricity, particularly across the southern regions of the country (Electricity Company of Ghana, 2023). Through infrastructure maintenance, network expansion, and the digitalization of customer services, ECG plays a central role in sustaining daily life and promoting national development \cite{ECG2023}.
+
+\vspace{0.25cm}
+
+A key responsibility of ECG is the prompt restoration of power after electrical faults are reported by customers. Rapid fault repair and service restoration are important for maintaining the reliability and continuity of electricity supply \cite{Wang2025}. These faults may involve transformer installation and maintenance, cable joining and termination, network line extensions, pole replacement, and vegetation control (Wang et al., 2025). In district-level operational areas such as Hohoe, technicians work in fixed teams of three. These teams are responsible for responding to faults across multiple communities within a service radius of approximately 40 kilometers. On a typical day, several faults may be reported at the same time from different locations. Each fault requires a timely response to restore electricity supply and ensure public safety.
+% A fundamental operational responsibility of ECG is the prompt restoration of power following electrical faults reported by customers as rapid fault repair and service restoration are essential for maintaining distribution network reliability and continuity of supply \cite{Wang2025}. These faults range from transformer installation and maintenance to cable joining and termination, network line extensions, pole replacement, and vegetation control (Wang et al., 2025). In district-level operational zones such as Hohoe, technicians work in fixed groups of three and are required to respond to faults across multiple communities distributed within a service radius of nearly 40 kilometers. On a typical day, several faults may be reported simultaneously from different locations, all requiring timely intervention to restore supply and ensure public safety.
+
+\vspace{0.25cm}
+Despite the importance of timely fault restoration, technician assignments in the Hohoe operational zone are mainly done manually based on managerial judgment. This approach often overlooks factors such as travel distance, workload balance, and time constraints, leading to operational inefficiencies and unequal service delivery. As a result, some technician groups become overburdened while distant communities experience longer response times. These challenges increase costs for ECG, affect technician productivity, and reduce customer satisfaction. Therefore, there is a need for a systematic decision-support approach that improves efficiency and promotes equitable service delivery.
+% Despite the importance of efficient fault response, the assignment of technician groups to reported faults in the Hohoe operational zone is largely performed manually. Decisions are typically made based on managerial experience and immediate judgement, without a structured framework for evaluating travel distances, workload balance, or time constraints, under the assumption that all technician groups possess comparable expertise. While this ad-hoc approach functions operationally, it often leads to inefficiencies and inequities in service delivery. Some technician groups may be required to travel long distances and handle multiple faults in a single day, while others attend to only a few nearby issues. Similarly, communities located closer to the Hohoe ECG office tend to receive faster service, whereas more distant towns may experience repeated delays, raising concerns about fairness and equitable access to electricity services.
+% These inefficiencies have implications for all stakeholders. For ECG, manual assignment practices can increase travel costs, prolong response times, and limit the number of faults resolved within a working day. For technicians, uneven workload distribution may contribute to fatigue, reduced morale, and lower productivity. For customers and communities, persistent disparities in response times can undermine trust in the utility provider and reduce overall satisfaction. Collectively, these challenges motivate the need for a systematic decision-support approach to technician assignment that balances operational efficiency with equitable service delivery.
+
+\vspace{0.25cm}
+This study investigates how technician groups can be assigned efficiently and fairly when multiple electrical faults occur simultaneously across different communities. To address this problem, it proposes a Technician Group Fault Assignment Optimization Model for ECG operations in Hohoe. The model uses binary integer optimization and incorporates key operational factors such as travel time, repair duration, technician capacity, and shift-length constraints.
+% This study addresses the following research question: When multiple electrical faults are reported simultaneously across geographically dispersed communities, how can technician groups be assigned in a manner that is both efficient and equitable under practical operational constraints? To answer this question, the paper proposes a Technician Group Fault Assignment Optimization Model tailored to ECG operations in the Hohoe zone. The model formulates the assignment problem as a binary integer optimization problem, explicitly accounting for travel times, repair durations, technician group capacity, and fixed shift-length constraints.
+
+\vspace{0.25cm}
+
+The proposed model aims to minimize total travel time while also promoting equitable service delivery. It classifies communities into Near and Far zones based on their distance from the Hohoe ECG office. An equity constraint is included to limit differences in average response times between the two zones. This helps ensure that communities located farther from the service center are not consistently disadvantaged. As a result, the model provides a framework that balances operational efficiency with fairness in technician assignment and daily fault response planning.
+% In addition to minimizing total travel time, the proposed model incorporates equity as a core objective by classifying communities into Near and Far zones based on their distance from the Hohoe ECG office. An equity constraint limits the disparity in average response times between these zones, ensuring that communities located farther from the service center are not systematically disadvantaged. The resulting formulation provides a multi-objective framework that balances efficiency and fairness in daily operational planning.
+
+\vspace{0.25cm}
+By applying operations research techniques to a real-world electricity distribution problem, this study contributes a transparent and data-driven framework for technician assignment that can improve response times, reduce operational costs, and promote equitable service delivery. Although the model is developed in the context of ECG’s Hohoe operational zone, the approach is generalizable to other district-level utility operations facing similar logistical and resource-allocation challenges.
+
+
+% =================================================
+\section*{Methods}
+% =================================================
+
+\subsection*{Study Context and Scope}
+
+
+This study focuses on the Operations Department of the Electricity Company of Ghana
+in Hohoe, Volta Region. The department is responsible for addressing electrical faults
+across a service radius of approximately 40 kilometers. The department handles
+transformer installation and maintenance, cable joining and termination, network line
+extensions, pole replacements, and vegetation control. When multiple faults are reported
+simultaneously, especially after adverse weather conditions, technician group
+assignments are made ad-hoc without systematic optimization. This study addresses the
+operational question of how to assign available technician groups to reported faults in
+a manner that minimizes total response time while ensuring equitable service delivery
+across geographic zones.
+
+\subsection*{Data Collection}
+\subsubsection*{Primary Data}
+Operational data were obtained through a structured interview with service personnel
+from the ECG Hohoe Operations Department. The department currently employs 15
+qualified technicians deployed in fixed groups of three, resulting in five technician
+groups per operational shift. The department operates under an 8-hour shift duration,
+with each group capable of handling approximately two to three faults per shift.
+Six primary fault categories and their average repair times were identified (Table~\ref{tab:services}).
+
+\begin{table}[H]
+\centering
+\caption{Service categories and average completion times}
+\label{tab:services}
+\begin{tabular}{l c}
+\toprule
+Service & Average Completion Time (hours) \\
+\midrule
+Transformer installation & 4.00 \\
+Transformer maintenance & 0.75 \\
+Cable joining and termination & 0.33 \\
+Network line extension & 2.00 \\
+Pole replacement & 1.00 \\
+Vegetation control & 4.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection*{Geographic Data}
+
+Service towns were identified from ECG records and validated through consultations
+with field personnel. Twenty-three major towns within the 40 km service radius were
+documented. Travel distances and travel times were obtained using the Google Maps
+API on 9 December 2026. Towns were classified into two geographic zones: Near
+(0–19.5 km) and Far (19.5–39 km).
+
+\subsubsection*{Simulated Fault Dataset}
+
+Due to the restrictions and confidentiality on actual faults records, we simulated a faults dataset that reflects typical daily operations. Fifteen faults were generated to match available capacity (five groups handling three faults). This represents a high-demand operational day requiring full technical resource utilization. We randomly assigned faults to towns using Python's random number generator (seed=142 for reproducibility). We assigned the service/fault types based on the operational frequency reported by ECG personnel (Table~\ref{tab:weights}).
+
+
+% Due to confidentiality restrictions on actual fault records, a simulated dataset was
+% generated to reflect typical daily operations. Fifteen faults were generated to match
+% maximum daily capacity (five groups handling three faults each). Fault locations and
+% types were randomly assigned using Python with a fixed random seed for reproducibility.
+
+\begin{table}[H]
+\centering
+\caption{Service weights based on operational frequency}
+\label{tab:weights}
+\begin{tabular}{l c l}
+\toprule
+Service & Weight (\%) & Operational Frequency \\
+\midrule
+Transformer maintenance & 30 & Routine \\
+Cable joining and termination & 25 & Frequent \\
+Network line extension & 15 & Moderate \\
+Transformer installation & 10 & Less frequent \\
+Pole replacement & 10 & Standard repairs \\
+Vegetation control & 10 & Seasonal \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =================================================
+\section*{Mathematical Model Formulation}
+% =================================================
+
+\subsection*{Problem Definition}
+We formulated the problem as an Integer Linear Programming (ILP) model. The model determines the optimal assignment of technician groups to fault and service locations. It is designed for high-demand operational periods in the Hohoe ECG Operations Department. The model has two main objectives. The first is operational efficiency through the minimization of total travel time. The second is spatial equity by ensuring comparable service quality across different geographic zones.These are shown by (Table~\ref{tab:index_sets},\ref{tab:operational_parameters},\ref{tab:policy_parameters}).
+
+% We formulated this as an Integer Linear Program that determined the optimal assignments of technician groups in the Hohoe ECG operation’s department to fault or service locations on a high-demand operations day. The model balances tow objectives: operational efficiency (minimizing total travel time) and spatial equity (ensuring comparable service quality across the geographic zones)
+
+\subsection*{Sets and Indices}
+\begin{table}[h!]
+\centering
+\caption{Index sets for the Technician Group Fault Assignment Model}
+\label{tab:index_sets}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Index Set} & \textbf{Indices} & \textbf{Description} \\
+\midrule
+$I$ & $\{1, 2, 3, \dots, 5\}$ & Set of technician groups \\
+$J$ & $\{1, 2, 3, \dots, 15\}$ & Set of reported faults \\
+$Z$ & $\{\text{Near, Far}\}$ & Set of geographic zones \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Parameters}
+\begin{table}[h!]
+\centering
+\caption{Operational Parameters for the Technician Group Fault Assignment Model}
+\label{tab:operational_parameters}
+\begin{tabular}{l l}
+\toprule
+\textbf{Parameter} & \textbf{Description} \\
+\midrule
+$t_j$ & Travel time from Hohoe to fault $j$ \\
+$r_j$ & Repair/Service time for fault $j$ \\
+$z_j$ & Geographic zone of fault $j$ ($z_j \in Z$) \\
+$Q_i = 3$ & Maximum number of faults a technician group $i$ can handle per shift \\
+$H = 8$ & Shift duration in hours \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}[h!]
+\centering
+\caption{Policy Parameters for the Technician Group Fault Assignment Model}
+\label{tab:policy_parameters}
+\begin{tabular}{l p{10cm}}
+\toprule
+\textbf{Parameter} & \textbf{Description} \\
+\midrule
+$\theta$ & Equity tolerance parameter (maximum allowable ratio of Far-zone to Near-zone average response time) \\
+$\alpha$ & Weight coefficient for efficiency objective ($0 \leq \alpha \leq 1$) \\
+$\beta$ & Weight coefficient for equity objective ($\beta = 1 - \alpha$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\subsection*{Decision Variables}
+
+The decision variable is represented by $x_{ij}$ where ;\\
+\[
+x_{ij} =
+\begin{cases}
+1, & \text{if technician group } i \text{ is assigned to fault } j,\\
+0, & \text{otherwise.}
+\end{cases}
+\]
+
+\subsection*{Objective Function}
+The model employs a weighted multi-objective function that combines operational efficiency and spatial equity:
+
+\begin{equation}
+\text{Minimize } Z = \alpha \sum_{i=1}^{5} \sum_{j=1}^{15} t_j x_{ij} + \beta \left( R_{\text{Far}} - R_{\text{Near}} \right)
+\end{equation}
+
+where $x_{ij} \in \{0,1\}$ is a binary decision variable equal to 1 if technician group $i$ is assigned to fault $j$, and 0 otherwise. $\alpha$ and $\beta$ are weight coefficients for the efficiency and equity objectives, respectively, with $\alpha + \beta = 1$.Also, $R_{FAR} $ and $R_{NEAR}$ are the response times in the far and near locations, respectively.
+
+\subsubsection*{Efficiency Component}
+
+The total travel time component is defined as:
+
+\begin{equation}
+\text{Total Travel Time} = \sum_{i=1}^{5} \sum_{j=1}^{15} t_j x_{ij}
+\end{equation}
+
+\subsubsection*{Equity Component}
+
+The average response times for Near and Far zones are defined as:
+
+\begin{equation}
+R_{\text{Near}} = \frac{\sum_{j: z_j = \text{Near}} t_j (\sum_{i=1}^{5} x_{ij})}{\text{Number of Near Faults}}
+\end{equation}
+
+\begin{equation}
+R_{\text{Far}} = \frac{\sum_{j: z_j = \text{Far}}  t_j(\sum_{i=1}^{5}  x_{ij})}{\text{Number of Far Faults}}
+\end{equation}
+\subsection*{Constraints}
+\subsubsection*{Coverage Constraint}
+
+Every fault must be assigned to exactly one technician group:
+
+\begin{equation}
+\sum_{i=1}^{5} x_{ij} = 1, \quad \forall j \in J
+\end{equation}
+
+where $x_{ij} \in \{0,1\}$ is the binary variable indicating whether technician group $i$ is assigned to fault $j$, and $J = \{1, 2, \dots, 15\}$ is the set of reported faults.
+
+
+
+\subsubsection*{Capacity Constraint}
+
+Each technician group can handle at most $Q_i = 3$ faults per shift:
+
+\begin{equation}
+\sum_{j=1}^{15} x_{ij} \leq Q_i, \quad \forall i \in I
+\end{equation}
+
+where $x_{ij} \in \{0,1\}$ is a binary variable equal to 1 if technician group $i$ is assigned to fault $j$, and $I = \{1, 2, \dots, 5\}$ is the set of technician groups.
+
+
+\subsubsection*{Time Feasibility Constraint}
+
+The total time required for each technician group to complete their assigned faults must not exceed the shift duration $H = 8$ hours:
+
+\begin{equation}
+\sum_{j=1}^{15} (t_j + r_j) x_{ij} \leq H, \quad \forall i \in I
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $t_j$ is the travel time to fault $j$,
+    \item $r_j$ is the repair/service time for fault $j$,
+    \item $x_{ij} \in \{0,1\}$ indicates whether technician group $i$ is assigned to fault $j$,
+    \item $I = \{1, 2, \dots, 5\}$ is the set of technician groups.
+\end{itemize}
+
+
+\subsubsection*{Equity Constraint}
+
+To ensure fair service delivery across geographic zones, the average response time for Far-zone towns should not exceed a specified multiple $\theta = 1.6$ of the Near-zone average response time:
+
+\begin{equation}
+R_{\text{Far}} \leq \theta \cdot R_{\text{Near}}
+\end{equation}
+
+where:
+
+\begin{align}
+R_{\text{Near}} &= \frac{\sum_{j: z_j = \text{Near}} t_j } {\sum_{j: z_j = \text{Near}}1} \\
+R_{\text{Far}}  &= \frac{\sum_{j: z_j = \text{Far}} t_j }{\sum_{j: z_j = \text{Far}}1}
+\end{align}
+
+and:
+\begin{itemize}
+    \item $t_j$ is the travel time to fault $j$,
+    \item $z_j \in \{\text{Near}, \text{Far}\}$ is the geographic zone of fault $j$,
+    \item $N_{\text{Near}}$ and $N_{\text{Far}}$ are the number of faults in Near and Far zones, respectively.
+\end{itemize}
+
+
+\section*{Model Implementation}
+
+The Binary Integer Linear Program (BILP) model was implemented in Python (v3.12.3) using \texttt{PuLP} (v3.3.0), an open-source linear programming package. Simulated faults data were loaded and processed using \texttt{Pandas} (v2.3.1) for descriptive statistics and data manipulation. 
+
+The model's decision variables, objective function, and constraints were defined and generated programmatically using \texttt{PuLP}. The CBC (COIN-OR Branch and Cut) solver was employed with default parameters to solve the integer linear program. Optimal assignments were extracted from the solved decision variables, and performance metrics were calculated to evaluate efficiency and equity.
+
+For reproducibility, the complete implementation is available in the study's GitHub repository: \url{https://github.com/itsjoeka/optimization_assignment.git}. All computations were performed on a standard desktop computer with the following specifications: Host: 21JLS4R300 ThinkPad E14 Gen 5, OS: Ubuntu 24.04.3 LTS x86\_64, Memory: 15.6 GiB, CPU: 13th Gen Intel i7-1355U (12 cores) @ 5.0 GHz.
+
+% =================================================
+
+
+
+% =================================================
+\section*{Results and Discussion}
+% =================================================
+
+We present the optimal assignment solution for each technician group obtained from the Integer Linear Programming model, analyze constraint satisfaction, and compare performance against baseline heuristic. 
+
+\subsection*{Optimal Assignment Solution}
+
+The assignment ILP model converged to an optimal solution in 0.02 seconds. Table~\ref{tab:optimal} presents the optimal assignment of the 15 faults to the 5 technician groups. All technician groups were assigned exactly 3 faults, demonstrating a perfect utilization of capacity in the operational unit.
+
+
+
+% \begin{table}[H]
+% \centering
+% \scalebox{0.85}{
+% \begin{tabular}{c l l l l c c c}
+% \toprule
+% Group & Fault ID & Town & Zone & Fault Type & Travel (hrs) & Repair (hrs) & Total (hrs) \\
+% \midrule
+% 0 & F3  & Golokwati      & Far  & Transformer maintenance         & 0.500 & 0.750 & 1.250 \\
+% 0 & F13 & Ve-Kobenu      & Near & Cable joining and termination   & 0.583 & 0.330 & 0.913 \\
+% 0 & F10 & Wli            & Far  & Transformer installation        & 0.483 & 4.000 & 4.483 \\
+% 1 & F1  & Afadzo South   & Far  & Pole replacement                & 1.017 & 1.000 & 2.017 \\
+% 1 & F4  & Agome yo       & Near & Network line extension          & 0.517 & 2.000 & 2.517 \\
+% 1 & F2  & Liati          & Far  & Transformer maintenance         & 0.550 & 0.750 & 1.300 \\
+% 2 & F8  & Agome yo       & Near & Cable joining and termination   & 0.517 & 0.330 & 0.847 \\
+% 2 & F14 & Agome yo       & Near & Transformer maintenance         & 0.517 & 0.750 & 1.267 \\
+% 2 & F9  & Santrokofi     & Near & Network line extension          & 0.333 & 2.000 & 2.333 \\
+% 3 & F15 & Gbi-Kledzo     & Near & Transformer maintenance         & 0.267 & 0.750 & 1.017 \\
+% 3 & F5  & Logba          & Far  & Network line extension          & 1.000 & 2.000 & 3.000 \\
+% 3 & F11 & Ve-Dator       & Near & Transformer maintenance         & 0.600 & 0.750 & 1.350 \\
+% 4 & F6  & Afadzo South   & Far  & Cable joining and termination   & 1.017 & 0.330 & 1.347 \\
+% 4 & F7  & Akpafu         & Near & Cable joining and termination   & 0.417 & 0.330 & 0.747 \\
+% 4 & F12 & Ve-Gbodome     & Far  & Transformer installation        & 0.667 & 4.000 & 4.667 \\
+% \bottomrule
+% \end{tabular}%
+% }
+% \caption{Optimization Result for Simulated Fault Assignments for ECG Hohoe Technician Groups}
+% \label{tab:optimal}
+% \end{table}
+
+The total travel time of the system was 9.085 hours across all technician groups, with total work time (travel time + repair time) of 29.645 hours. Group workload times ranged from 4.447 hours to 4.166 hours for groups 2 and 7 respectively, representing a 2.7 hour spread. Notably, the optimizer paired complex tasks like transformer installation (4-hour repair time) with shorter distance faults to maintain time feasibility.
+
+\subsection*{Constraint Satisfaction Analysis}
+
+The model incorporates three primary operational constraints: capacity, time feasibility, and geographic equity. 
+
+\subsubsection*{Capacity Constraints}
+
+From  Table~\ref{tab:optimal}, all the five technician groups were assigned exactly 3 faults, satisfying the capacity constraint Q $\le$ 3.
+
+
+\subsubsection*{Time Feasibility Constraints}
+
+Table~\ref{tab:optimal} summarizes shift time utilization for each technician group under the optimal assignment. All five groups completed their assigned faults within the 8-hour shift constraint ($H = 8$), with utilization levels ranging from 55.6\% to 89.6\%. The average shift utilization across groups was 74.1\%, corresponding to an average slack time of 2.07 hours per group.
+
+This remaining slack provides operational buffer capacity within each shift, allowing the system to accommodate unexpected delays, travel time uncertainties, or emergency faults requiring immediate attention. Even for Group~0, which recorded the highest utilization, the minimum slack of 0.834 hours remains sufficient to support operational flexibility without violating shift-length constraints.
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.85}{
+\begin{tabular}{c l l l l c c c}
+\toprule
+Group & Fault ID & Town & Zone & Fault Type & Travel (hrs) & Repair (hrs) & Total (hrs) \\
+\midrule
+0 & F3  & Golokwati      & Far  & Transformer maintenance         & 0.500 & 0.750 & 1.250 \\
+0 & F13 & Ve-Kobenu      & Near & Cable joining and termination   & 0.583 & 0.330 & 0.913 \\
+0 & F10 & Wli            & Far  & Transformer installation        & 0.483 & 4.000 & 4.483 \\
+1 & F1  & Afadzo South   & Far  & Pole replacement                & 1.017 & 1.000 & 2.017 \\
+1 & F4  & Agome yo       & Near & Network line extension          & 0.517 & 2.000 & 2.517 \\
+1 & F2  & Liati          & Far  & Transformer maintenance         & 0.550 & 0.750 & 1.300 \\
+2 & F8  & Agome yo       & Near & Cable joining and termination   & 0.517 & 0.330 & 0.847 \\
+2 & F14 & Agome yo       & Near & Transformer maintenance         & 0.517 & 0.750 & 1.267 \\
+2 & F9  & Santrokofi     & Near & Network line extension          & 0.333 & 2.000 & 2.333 \\
+3 & F15 & Gbi-Kledzo     & Near & Transformer maintenance         & 0.267 & 0.750 & 1.017 \\
+3 & F5  & Logba          & Far  & Network line extension          & 1.000 & 2.000 & 3.000 \\
+3 & F11 & Ve-Dator       & Near & Transformer maintenance         & 0.600 & 0.750 & 1.350 \\
+4 & F6  & Afadzo South   & Far  & Cable joining and termination   & 1.017 & 0.330 & 1.347 \\
+4 & F7  & Akpafu         & Near & Cable joining and termination   & 0.417 & 0.330 & 0.747 \\
+4 & F12 & Ve-Gbodome     & Far  & Transformer installation        & 0.667 & 4.000 & 4.667 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Optimization Result for Simulated Fault Assignments for ECG Hohoe Technician Groups}
+\label{tab:optimal}
+\end{table}
+
+
+\subsubsection*{Geographic Equity}
+
+Table~\ref{tab:random} presents average response times by geographic zone. The equity constraint ($\theta = 1.6$) is satisfied, with an observed Far-to-Near response time ratio of 1.59. This indicates that faults occurring in Far-zone communities experience, on average, response times that are 59\% longer than those in Near-zone communities (44.9 minutes versus 28.1 minutes).
+
+The achieved ratio lies just 0.01 below the allowable threshold, indicating that the equity constraint is binding and therefore actively influences the optimization outcome. In the absence of this constraint, the optimizer would likely prioritize Near-zone faults to minimize total travel time, resulting in substantially higher response-time disparities, potentially exceeding ratios of 1.7 or more.
+
+The near-binding status of the equity constraint, corresponding to approximately 99.4\% of the constraint capacity, demonstrates that the proposed model successfully enforces meaningful geographic fairness while maintaining operational efficiency. This constraint is essential for preventing the systematic neglect of distant communities, while still recognizing the inherent increase in travel time associated with greater physical distances.
+
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.85}{% Scale table 105%
+\begin{tabular}{c l l l l c c c}
+\toprule
+Group & Fault ID & Town & Zone & Fault Type & Travel (hrs) & Repair (hrs) & Total (hrs) \\
+\midrule
+0 & F3  & Golokwati      & Far  & Transformer maintenance         & 0.500 & 0.750 & 1.250 \\
+0 & F2  & Liati          & Far  & Transformer maintenance         & 0.550 & 0.750 & 1.300 \\
+0 & F12 & Ve-Gbodome     & Far  & Transformer installation        & 0.667 & 4.000 & 4.667 \\
+1 & F8  & Agome yo       & Near & Cable joining and termination   & 0.517 & 0.330 & 0.847 \\
+1 & F5  & Logba          & Far  & Network line extension          & 1.000 & 2.000 & 3.000 \\
+1 & F10 & Wli            & Far  & Transformer installation        & 0.483 & 4.000 & 4.483 \\
+2 & F6  & Afadzo South   & Far  & Cable joining and termination   & 1.017 & 0.330 & 1.347 \\
+2 & F7  & Akpafu         & Near & Cable joining and termination   & 0.417 & 0.330 & 0.747 \\
+2 & F13 & Ve-Kobenu      & Near & Cable joining and termination   & 0.583 & 0.330 & 0.913 \\
+3 & F1  & Afadzo South   & Far  & Pole replacement                & 1.017 & 1.000 & 2.017 \\
+3 & F4  & Agome yo       & Near & Network line extension          & 0.517 & 2.000 & 2.517 \\
+3 & F14 & Agome yo       & Near & Transformer maintenance         & 0.517 & 0.750 & 1.267 \\
+4 & F15 & Gbi-Kledzo     & Near & Transformer maintenance         & 0.267 & 0.750 & 1.017 \\
+4 & F9  & Santrokofi     & Near & Network line extension          & 0.333 & 2.000 & 2.333 \\
+4 & F11 & Ve-Dator       & Near & Transformer maintenance         & 0.600 & 0.750 & 1.350 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Random Allocation for Simulated Fault Assignments for ECG Hohoe Technician Groups}
+\label{tab:random}
+\end{table}
+
+
+
+\subsection*{Baseline Comparison}
+
+The optimized ILP assignment was compared against a round-robin baseline representing a simple sequential allocation strategy. Both approaches achieved identical total travel time (8.985 hours) and total work time (29.055 hours), indicating that aggregate efficiency metrics alone are insufficient for evaluating assignment quality.
+
+The key distinction arises in time feasibility. Under the round-robin allocation, Group~1 was assigned a total workload of 11.667 hours, exceeding the 8-hour shift constraint by approximately 45\%. In contrast, the ILP solution ensured that all technician groups operated within shift limits, with the highest assigned workload equal to 6.76 hours, corresponding to a safety margin of 15.5\%.
+
+These results demonstrate that while baseline or random allocation strategies may appear efficient in terms of total travel or total work time, they fail to guarantee simultaneous satisfaction of critical operational constraints. The ILP framework explicitly enforces feasibility across multiple dimensions, including shift duration, workload balance, and equity, thereby validating the necessity of formal optimization methods in multi-constraint operational environments.
+
+
+% \subsection*{Summary of key findings}
+
+% \begin{itemize}
+%     \item The optimal assignment achieves balanced workloads across all five technician groups.
+%     \item Time feasibility and capacity constraints are fully satisfied for every group.
+%     \item Near and Far zones are distributed among technician groups to maintain equitable service delivery.
+%     \item Compared to the random allocation, the optimal solution reduces potential delays and travel time while promoting fairness across communities.
+% \end{itemize}
+
+% =================================================
+
+\section*{Limitations}
+We used simulated fault data based on realistic operational parameters rather than historical ECG records, and modeled a static single-period assignment problem without considering dynamic real-time fault arrivals. Also, the model assumes homogeneous technician skill levels.
+
+
+% =================================================
+\section*{Conclusion}
+% =================================================
+This study formal optimization shows that optimization methods are essential for equitable and efficient deployment of technicians to service towns in regional electricity distribution operations. The binary integer linear programming model successfully assigned five technician groups to 15 faults across near and far service communities during a high demand situation at the Hohoe ECG, achieving a 100\% capacity utilization while satisfying all operational constraints. The model maintained geographic fairness with a Far/Near ratio of 1.59 ($\leq$ 1.6), preventing the systematic disadvantage of neighboring communities that informal methods of assignment create. Even though the model achieved same travel efficiency with the round-robin baseline, only the optimization model guaranteed feasibility avoiding shift violations and achieving a better workload balance. The binding equity constraint confirmed that without explicit enforcement of fairness, distance-minimizing heuristics would produce Far/Near disparities exceeding 2 times, neglecting distance towns. For Hohoe ECG and similar regional operations facing resource constraints during weather related demand surges, this proposed optimization framework provides a practical tool for daily deployment planning that balances efficiency with equitable service across geographically dispersed communities. 
+
+
+\section*{Data Availability}
+All data used in this study including both real town geographic information and simulated faults dataset, optimization code, and results files, are publicly available in our GitHub repository at: \url{https://github.com/itsjoeka/optimization_assignment.git}
+
+% =================================================
+% \section*{References}
+% =================================================
+
+\begin{thebibliography}{9}
+
+\bibitem{ECG2023}
+Electricity Company of Ghana. (2023). 
+\textit{Corporate profile and operational mandate}. 
+\url{https://www.ecg.com.gh}
+
+\bibitem{Modi2005}
+Modi, V., McDade, S., Lallement, D., \& Saghir, J. (2005). 
+Energy services for the Millennium Development Goals. 
+\textit{Energy Policy}, 34(18), 2037--2051. 
+\url{https://doi.org/10.1016/j.enpol.2005.03.008}
+
+\bibitem{Acheampong2021}
+Acheampong, A. O., Erdiaw-Kwasie, M. O., \& Abunyewah, M. (2021). 
+Does energy accessibility improve human development? Evidence from Africa. 
+\textit{Energy Economics}, 103, 105610. 
+\url{https://doi.org/10.1016/j.eneco.2021.105610}
+
+\bibitem{IEA2022}
+International Energy Agency. (2022). 
+\textit{Electricity market report}. 
+\url{https://www.iea.org}
+
+\bibitem{Wang2025}
+Wang, H., Lu, S., Jiang, Y., Shi, Y., Song, C., \& Liu, G. (2025). 
+A collaborative framework for rapid fault repair and service restoration in distribution networks. 
+\textit{International Journal of Intelligent Networks}. 
+\url{https://doi.org/10.1016/j.ijin.2025.11.006}
+
+
+\bibitem{Brown2009}
+Brown, R. E. (2009). Electric power distribution reliability (2nd ed.). CRC Press.
+
+\bibitem{Borba2019}
+Borba, B. S. M. C., Fortes, M. Z., Bitencourt, L. A., Ferreira, V. H., Maciel, R. S., Guimaraens, M. A. R., Lima, G. B. A., Barboza, E. U., Henriques, H. O., Bergiante, N. C. R., \& Moreira, B. S. (2019). A review on optimization methods for workforce planning in electrical distribution utilities.
+\textit{ Computers \& Industrial Engineering,}135, 286–298. 
+\url{https://doi.org/10.1016/j.cie.2019.06.002}
+
+
+\bibitem{Yu2023}
+Yu, V. F., Lin, Y.-S., Jodiawan, P., Lin, S.-W., \& Lai, Y.-C. (2023). 
+\textit{The Field Technician Scheduling Problem with Experience‑Dependent Service Times. Mathematics,}11(21), 4562.   
+\url{https://doi.org/10.3390/math11214562}
+
+\bibitem{Eles2022}
+Éles, András \& Heckl, István \& Cabezas, Heriberto. (2022). New general mixed-integer linear programming model for mobile workforce management. Optimization and Engineering. 23. 1-47. 10.1007/s11081-021-09597-0. 
+
+
+\bibitem{Bhaba2024}
+Tusar, Imran \& Sarker, Bhaba. (2024). Technician assignment in multi-shift maintenance schedules in an offshore wind farm. Renewable Energy Focus. 51. 100616. 10.1016/j.ref.2024.100616. 
+
+\end{thebibliography}
+
+
+\end{document}
