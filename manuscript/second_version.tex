@@ -56,13 +56,13 @@ Electricity supports healthcare, education, commerce, transportation, and househ
 
 \vspace{0.25cm}
 
-A core responsibility of ECG is the prompt restoration of power after a fault is reported. Rapid repair and restoration sustain the reliability and continuity of supply \cite{Wang2025}. Reported faults include transformer installation and maintenance, cable joining and termination, network line extension, pole replacement, and vegetation control. In district-level operations such as Hohoe, technicians work in fixed groups of three and respond to faults across communities spread over a service radius of roughly 40 kilometers. On a typical day several faults are reported at once from different towns, each requiring a timely response.
+A core responsibility of ECG is the prompt restoration of power after a fault is reported. Rapid repair and restoration sustain the reliability and continuity of supply \cite{Brown2009,Wang2025}. Reported faults include transformer installation and maintenance, cable joining and termination, network line extension, pole replacement, and vegetation control. In district-level operations such as Hohoe, technicians work in fixed groups of three and respond to faults across communities spread over a service radius of roughly 40 kilometers. On a typical day several faults are reported at once from different towns, each requiring a timely response.
 
 \vspace{0.25cm}
 Despite this, technician assignment in Hohoe is largely manual, based on managerial judgment rather than a structured accounting of travel distance, workload, or shift time. This produces two failures. Some groups are overloaded while others are underused, and towns distant from the operations center wait longer for repair than nearby towns, regardless of fault severity. Both failures raise ECG's operating cost and weaken customer confidence in the utility. A systematic decision-support method, applied to this assignment problem, can address both.
 
 \vspace{0.25cm}
-Workforce scheduling for electrical distribution utilities has been studied as an optimization problem \cite{Borba2019}, and technician scheduling with service-time variation has been formulated as a mixed-integer program in other settings \cite{Yu2023,Eles2022}. Equity in technician assignment has also been treated directly as an objective, rather than an afterthought, in multi-shift maintenance operations \cite{Bhaba2024}. This paper applies the same discipline to a single-base, multi-town distribution service area: an identical-parallel-machine assignment problem with a capacity limit, a shift-duration limit, and an explicit equity constraint on response time.
+Workforce scheduling for electrical distribution utilities has been studied as an optimization problem \cite{Borba2019}. Technician and mobile-workforce scheduling have been formulated as mixed-integer programs in other settings, including one that models experience-dependent service times directly \cite{Yu2023,Eles2022}. Equity in technician assignment has also been treated directly as an objective, rather than an afterthought, in multi-shift maintenance operations \cite{Bhaba2024}. This paper applies the same discipline to a single-base, multi-town distribution service area: an identical-parallel-machine assignment problem, in the sense of $P \,\|\, \sum_j w_j C_j$ \cite{Pinedo2016}, with a capacity limit, a shift-duration limit, and an explicit equity constraint on response time.
 
 \vspace{0.25cm}
 This study asks how technician groups should be assigned when several faults are reported at once across dispersed communities, and proposes a Technician Group Fault Assignment Optimization Model for ECG Hohoe. The model minimizes mean response time, classifies communities into Near and Far zones by distance from the Hohoe base, and bounds the response-time gap between the two zones so that distant communities are not systematically left waiting. The result is a framework that treats efficiency and equity as two terms of a single, tunable objective rather than as a trade-off left to informal judgment.
@@ -374,7 +374,7 @@ A single instance cannot establish how representative these results are. We gene
 
 With the current five-group establishment, only 2 of the 15 instances (13.3\%, Wilson 95\% CI [3.7\%, 37.9\%]) admit any feasible assignment. Required shift-hours across the 15 instances average 47.7 h against 40 h available. On most simulated days, no assignment exists under the current establishment, regardless of dispatch policy: this is a resourcing conclusion, not a limitation of the optimization method. Computing, for each instance, the minimum group count admitting a feasible assignment, the median is 7 and the range is 5 to 9; raising the establishment from five to seven groups would make 80\% of simulated days feasible, and nine groups would cover all fifteen.
 
-Solved at each instance's own minimum feasible group count, the exact optimum's combined-objective advantage over the local-search heuristic has a median of 0.39\% across the 14 instances where both are feasible (Wilcoxon signed-rank, $p=0.005$); the efficiency and equity components are not individually significant on their own. Because the optimum by construction cannot lose on the quantity it minimizes, this test is close to automatically significant whenever any difference exists at all; the magnitude, not the $p$-value, is the informative number, and it confirms the modest efficiency gain reported in the base-instance comparison above.
+Solved at each instance's own minimum feasible group count, the exact optimum's combined-objective advantage over the local-search heuristic has a median of 0.39\% across the 14 instances where both are feasible (Wilcoxon signed-rank test \cite{Wilcoxon1945}, $p=0.005$); the efficiency and equity components are not individually significant on their own. Because the optimum by construction cannot lose on the quantity it minimizes, this test is close to automatically significant whenever any difference exists at all; the magnitude, not the $p$-value, is the informative number, and it confirms the modest efficiency gain reported in the base-instance comparison above.
 
 The method scales past the base instance. At $n=60$ faults with 26 groups, holding utilization near 93\%, the model solves to a proven optimum in 29 seconds. An intermediate instance at $n=45$ did not complete its search within a 600-second budget, but reached a 0.0\% gap; its best-found solution is very likely optimal, though not formally proven. Solve time does not grow smoothly with instance size: it depends on how tightly a given instance's workloads pack, not on fault count alone.
 
@@ -402,38 +402,38 @@ All data used in this study, including the field-measured town network, the simu
 \begin{thebibliography}{9}
 
 \bibitem{ECG2023}
-Electricity Company of Ghana. (2023).
-\textit{Corporate profile and operational mandate}.
-\url{https://www.ecg.com.gh}
+Electricity Company of Ghana. (n.d.).
+\textit{Profile of Electricity Company of Ghana}.
+\url{https://ecg.com.gh/index.php/en/history/profile-of-electricity-company-of-ghana}
 
 \bibitem{Modi2005}
 Modi, V., McDade, S., Lallement, D., \& Saghir, J. (2005).
-Energy services for the Millennium Development Goals.
-\textit{Energy Policy}, 34(18), 2037--2051.
-\url{https://doi.org/10.1016/j.enpol.2005.03.008}
+\textit{Energy Services for the Millennium Development Goals}.
+Energy Sector Management Assistance Programme (ESMAP), United Nations Development Programme, UN Millennium Project, and the World Bank.
+\url{https://qsel.columbia.edu/Energy-Services-for-the-Millennium-Development-Goals}
 
 \bibitem{Acheampong2021}
 Acheampong, A. O., Erdiaw-Kwasie, M. O., \& Abunyewah, M. (2021).
-Does energy accessibility improve human development? Evidence from Africa.
-\textit{Energy Economics}, 103, 105610.
-\url{https://doi.org/10.1016/j.eneco.2021.105610}
+Does energy accessibility improve human development? Evidence from energy-poor regions.
+\textit{Energy Economics}, 96, 105165.
+\url{https://doi.org/10.1016/j.eneco.2021.105165}
 
 \bibitem{IEA2022}
 International Energy Agency. (2022).
-\textit{Electricity market report}.
-\url{https://www.iea.org}
+\textit{Electricity Market Report -- July 2022}.
+\url{https://www.iea.org/reports/electricity-market-report-july-2022}
 
 \bibitem{Wang2025}
-Wang, H., Lu, S., Jiang, Y., Shi, Y., Song, C., \& Liu, G. (2025).
+Wang, H., et al. (2025).
 A collaborative framework for rapid fault repair and service restoration in distribution networks.
 \textit{International Journal of Intelligent Networks}.
 \url{https://doi.org/10.1016/j.ijin.2025.11.006}
 
 \bibitem{Brown2009}
-Brown, R. E. (2009). Electric power distribution reliability (2nd ed.). CRC Press.
+Brown, R. E. (2009). \textit{Electric Power Distribution Reliability} (2nd ed.). CRC Press.
 
 \bibitem{Borba2019}
-Borba, B. S. M. C., Fortes, M. Z., Bitencourt, L. A., Ferreira, V. H., Maciel, R. S., Guimaraens, M. A. R., Lima, G. B. A., Barboza, E. U., Henriques, H. O., Bergiante, N. C. R., \& Moreira, B. S. (2019). A review on optimization methods for workforce planning in electrical distribution utilities.
+Borba, B. S. M. C., Fortes, M. Z., Bitencourt, L. A., Ferreira, V. H., et al. (2019). A review on optimization methods for workforce planning in electrical distribution utilities.
 \textit{Computers \& Industrial Engineering}, 135, 286--298.
 \url{https://doi.org/10.1016/j.cie.2019.06.002}
 
@@ -444,12 +444,21 @@ The Field Technician Scheduling Problem with Experience-Dependent Service Times.
 \url{https://doi.org/10.3390/math11214562}
 
 \bibitem{Eles2022}
-Éles, A., Heckl, I., \& Cabezas, H. (2022). New general mixed-integer linear programming model for mobile workforce management. \textit{Optimization and Engineering}, 23, 1--47.
+Éles, A., Heckl, I., \& Cabezas, H. (2022). New general mixed-integer linear programming model for mobile workforce management. \textit{Optimization and Engineering}, 23, 479--525.
 \url{https://doi.org/10.1007/s11081-021-09597-0}
 
 \bibitem{Bhaba2024}
-Tusar, I., \& Sarker, B. (2024). Technician assignment in multi-shift maintenance schedules in an offshore wind farm. \textit{Renewable Energy Focus}, 51, 100616.
+Tusar, M. I. H., \& Sarker, B. R. (2024). Technician assignment in multi-shift maintenance schedules in an offshore wind farm. \textit{Renewable Energy Focus}, 51, 100616.
 \url{https://doi.org/10.1016/j.ref.2024.100616}
+
+\bibitem{Pinedo2016}
+Pinedo, M. L. (2016). \textit{Scheduling: Theory, Algorithms, and Systems} (5th ed.). Springer.
+\url{https://doi.org/10.1007/978-3-319-26580-3}
+
+\bibitem{Wilcoxon1945}
+Wilcoxon, F. (1945). Individual comparisons by ranking methods.
+\textit{Biometrics Bulletin}, 1(6), 80--83.
+\url{https://doi.org/10.2307/3001968}
 
 \end{thebibliography}
 
